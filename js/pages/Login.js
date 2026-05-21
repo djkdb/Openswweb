@@ -8,29 +8,27 @@ function Login({ onLogin, setPage }) {
   const [error, setError] = React.useState('');
   const [success, setSuccess] = React.useState('');
 
-  const handleLogin = (e) => {
+  const [busy, setBusy] = React.useState(false);
+
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
     if (!username || !password) {
       setError('아이디와 비밀번호를 모두 입력해 주세요.');
       return;
     }
-
-    if (username === 'admin' && password === 'admin1234') {
-      onLogin({ name: '운영자', number: '00', role: 'admin', username: 'admin' });
-      return;
-    }
-
-    const stored = JSON.parse(localStorage.getItem('classfc_accounts') || '[]');
-    const acc = stored.find(a => a.username === username && a.password === password);
-    if (acc) {
-      onLogin({ name: acc.name, number: acc.number, role: 'member', username: acc.username });
-    } else {
+    setBusy(true);
+    try {
+      const r = await api.post('/api/auth/login', { username, password });
+      onLogin(r.user, r.token);
+    } catch (e) {
       setError('아이디 또는 비밀번호가 올바르지 않습니다.');
+    } finally {
+      setBusy(false);
     }
   };
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -39,41 +37,26 @@ function Login({ onLogin, setPage }) {
       setError('모든 항목을 입력해 주세요.');
       return;
     }
-
     if (password.length < 6) {
       setError('비밀번호는 최소 6자 이상이어야 합니다.');
       return;
     }
 
-    const stored = JSON.parse(localStorage.getItem('classfc_accounts') || '[]');
-    if (stored.find(a => a.username === username)) {
-      setError('이미 사용 중인 아이디입니다.');
-      return;
+    setBusy(true);
+    try {
+      const r = await api.post('/api/auth/signup', {
+        username, password, name: signupName, number: signupNumber, email: signupEmail
+      });
+      setSuccess('가입 완료! 자동 로그인합니다...');
+      setTimeout(() => onLogin(r.user, r.token), 800);
+    } catch (e) {
+      const msg = e.message || '';
+      if (msg.includes('already taken')) setError('이미 사용 중인 아이디 또는 이메일입니다.');
+      else if (msg.includes('too short')) setError('비밀번호는 최소 6자 이상이어야 합니다.');
+      else setError('가입에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+    } finally {
+      setBusy(false);
     }
-
-    const newAcc = {
-      username,
-      password,
-      name: signupName,
-      number: signupNumber,
-      email: signupEmail,
-      role: 'member',
-      joinedAt: new Date().toISOString()
-    };
-    stored.push(newAcc);
-    localStorage.setItem('classfc_accounts', JSON.stringify(stored));
-    setSuccess('가입 완료! 이제 로그인 할 수 있습니다.');
-
-    setUsername('');
-    setPassword('');
-    setSignupName('');
-    setSignupNumber('');
-    setSignupEmail('');
-
-    setTimeout(() => {
-      setMode('login');
-      setSuccess('');
-    }, 1400);
   };
 
   return (
@@ -159,8 +142,8 @@ function Login({ onLogin, setPage }) {
 
                 {error && <div className="login-error">{error}</div>}
 
-                <button type="submit" className="btn-primary-green login-submit">
-                  LOGIN →
+                <button type="submit" className="btn-primary-green login-submit" disabled={busy}>
+                  {busy ? '로그인 중...' : 'LOGIN →'}
                 </button>
 
                 <div className="login-hint">
@@ -230,8 +213,8 @@ function Login({ onLogin, setPage }) {
                 {error && <div className="login-error">{error}</div>}
                 {success && <div className="login-success">{success}</div>}
 
-                <button type="submit" className="btn-primary-green login-submit">
-                  CREATE ACCOUNT →
+                <button type="submit" className="btn-primary-green login-submit" disabled={busy}>
+                  {busy ? '가입 중...' : 'CREATE ACCOUNT →'}
                 </button>
               </form>
             )}

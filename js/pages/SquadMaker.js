@@ -78,7 +78,7 @@ function SquadMaker({ user }) {
     setSelectedSlot(slots[0] ? slots[0].id : null);
   };
 
-  const handlePublish = () => {
+  const handlePublish = async () => {
     if (!targetMatch) {
       setPublishMsg('게시할 경기를 선택해 주세요.');
       return;
@@ -88,17 +88,13 @@ function SquadMaker({ user }) {
     if (filledCount < required) {
       if (!confirm(`아직 ${required - filledCount}자리가 비어있습니다. 그래도 게시할까요?`)) return;
     }
-    const lineups = JSON.parse(localStorage.getItem('classfc_lineups') || '{}');
-    lineups[targetMatch] = {
-      type,
-      formation,
-      assignments,
-      publishedAt: new Date().toISOString(),
-      publishedBy: user.name
-    };
-    localStorage.setItem('classfc_lineups', JSON.stringify(lineups));
-    setPublishMsg('라인업이 게시되었습니다. Schedule 페이지에서 부원이 확인할 수 있습니다.');
-    setTimeout(() => setPublishMsg(''), 4000);
+    try {
+      await api.post(`/api/matches/${targetMatch}/lineup`, { type, formation, assignments });
+      setPublishMsg('라인업이 게시되었습니다. Schedule 페이지에서 부원이 확인할 수 있습니다.');
+      setTimeout(() => setPublishMsg(''), 4000);
+    } catch (e) {
+      setPublishMsg('게시 실패: ' + e.message);
+    }
   };
 
   const usedIds = new Set(Object.values(assignments).map(String));

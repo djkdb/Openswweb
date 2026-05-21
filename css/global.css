@@ -216,6 +216,73 @@ button {
 
 .text-secondary { color: var(--gray-400) !important; }
 
+.app-loading {
+  position: fixed;
+  inset: 0;
+  background: var(--navy-900);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.app-loading-inner {
+  text-align: center;
+  max-width: 380px;
+  padding: 30px;
+}
+
+.app-loading-logo {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  margin-bottom: 16px;
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.6));
+}
+
+.app-loading-title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  letter-spacing: 4px;
+  color: var(--white);
+  margin-bottom: 18px;
+}
+
+.app-loading-spinner {
+  width: 38px;
+  height: 38px;
+  border: 3px solid rgba(0, 209, 102, 0.15);
+  border-top-color: var(--green-500);
+  border-radius: 50%;
+  margin: 0 auto 14px;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.app-loading-text {
+  color: var(--gray-200);
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+}
+
+.app-loading-hint {
+  color: var(--gray-600);
+  font-size: 0.8rem;
+  margin-top: 10px;
+}
+
+.app-loading-err {
+  background: rgba(255, 77, 94, 0.1);
+  border: 1px solid rgba(255, 77, 94, 0.3);
+  color: var(--danger);
+  padding: 10px 14px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  margin: 12px 0;
+  word-break: break-word;
+}
+
 @media (max-width: 768px) {
   .section-title { font-size: 2.2rem; }
   .page-section { padding: 40px 0 60px; }

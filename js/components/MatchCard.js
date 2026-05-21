@@ -1,21 +1,40 @@
 function MatchCard({ match, user }) {
-  const [rsvpStore, setRsvpStore] = React.useState(
-    JSON.parse(localStorage.getItem('classfc_rsvp') || '{}')
-  );
-  const [motmStore, setMotmStore] = React.useState(
-    JSON.parse(localStorage.getItem('classfc_motm') || '{}')
-  );
+  const [rsvpList, setRsvpList] = React.useState([]);
+  const [myRsvp, setMyRsvp] = React.useState(null);
+  const [motmTally, setMotmTally] = React.useState([]);
+  const [totalVotes, setTotalVotes] = React.useState(0);
   const [motmOpen, setMotmOpen] = React.useState(false);
+  const [lineup, setLineup] = React.useState(null);
   const [lineupOpen, setLineupOpen] = React.useState(false);
+  const [busy, setBusy] = React.useState(false);
 
-  const lineupStore = JSON.parse(localStorage.getItem('classfc_lineups') || '{}');
-  const officialLineup = lineupStore[match.id] || null;
+  const isFinished = match.status === 'finished';
+
+  const loadAll = async () => {
+    try {
+      if (!isFinished) {
+        const rsvp = await api.get(`/api/matches/${match.id}/rsvp`);
+        setRsvpList(rsvp);
+        if (user) {
+          const mine = rsvp.find(r => r.username === user.username);
+          setMyRsvp(mine ? mine.status : null);
+        }
+        const ln = await api.get(`/api/matches/${match.id}/lineup`);
+        setLineup(ln);
+      } else {
+        const motm = await api.get(`/api/matches/${match.id}/motm`);
+        setMotmTally(motm.tally || []);
+        setTotalVotes(motm.totalVotes || 0);
+      }
+    } catch {}
+  };
+
+  React.useEffect(() => { loadAll(); }, [match.id, user?.username]);
 
   const d = new Date(match.date);
   const dateLabel = `${d.getMonth() + 1}.${String(d.getDate()).padStart(2, '0')}`;
   const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][d.getDay()];
 
-  const isFinished = match.status === 'finished';
   let resultTag = '';
   if (isFinished) {
     if (match.scoreOurs > match.scoreTheirs) resultTag = 'WIN';
@@ -23,66 +42,58 @@ function MatchCard({ match, user }) {
     else resultTag = 'DRAW';
   }
 
-  const myRsvp = user && rsvpStore[match.id] && rsvpStore[match.id][user.username]
-    ? rsvpStore[match.id][user.username].status
-    : null;
+  const attendCount = rsvpList.filter(r => r.status === 'attend').length;
+  const lateCount = rsvpList.filter(r => r.status === 'late').length;
 
-  const attendList = rsvpStore[match.id] ? Object.values(rsvpStore[match.id]) : [];
-  const attendCount = attendList.filter(r => r.status === 'attend').length;
-  const lateCount = attendList.filter(r => r.status === 'late').length;
-
-  const handleRsvp = (status) => {
+  const handleRsvp = async (status) => {
     if (!user) {
       alert('로그인 후 이용해주세요.');
       return;
     }
-    const updated = { ...rsvpStore };
-    if (!updated[match.id]) updated[match.id] = {};
-    updated[match.id][user.username] = {
-      status,
-      name: user.name,
-      number: user.number,
-      at: new Date().toISOString()
-    };
-    setRsvpStore(updated);
-    localStorage.setItem('classfc_rsvp', JSON.stringify(updated));
-  };
-
-  const handleCancelRsvp = () => {
-    const updated = { ...rsvpStore };
-    if (updated[match.id]) {
-      delete updated[match.id][user.username];
-      if (Object.keys(updated[match.id]).length === 0) delete updated[match.id];
+    setBusy(true);
+    try {
+      await api.post(`/api/matches/${match.id}/rsvp`, { status });
+      await loadAll();
+    } catch (e) {
+      alert('처리 실패: ' + e.message);
+    } finally {
+      setBusy(false);
     }
-    setRsvpStore(updated);
-    localStorage.setItem('classfc_rsvp', JSON.stringify(updated));
   };
 
-  const motmVotes = motmStore[match.id] || {};
-  const myMotmVote = user ? motmVotes[user.username] : null;
-  const tally = {};
-  for (const voter in motmVotes) {
-    const mid = motmVotes[voter];
-    tally[mid] = (tally[mid] || 0) + 1;
-  }
-  let motmWinner = null, motmMax = 0;
-  for (const mid in tally) {
-    if (tally[mid] > motmMax) { motmWinner = mid; motmMax = tally[mid]; }
-  }
-  const motmPlayer = motmWinner ? members.find(m => String(m.id) === String(motmWinner)) : null;
-  const totalVotes = Object.keys(motmVotes).length;
+  const handleCancelRsvp = async () => {
+    setBusy(true);
+    try {
+      await api.del(`/api/matches/${match.id}/rsvp`);
+      await loadAll();
+    } catch (e) {
+      alert('처리 실패: ' + e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
 
-  const handleVoteMotm = (memberId) => {
+  let motmWinnerId = null, motmMax = 0;
+  for (const t of motmTally) {
+    if (Number(t.votes) > motmMax) { motmWinnerId = t.memberId; motmMax = Number(t.votes); }
+  }
+  const motmPlayer = motmWinnerId ? members.find(m => String(m.id) === String(motmWinnerId)) : null;
+
+  const handleVoteMotm = async (memberId) => {
     if (!user) {
       alert('로그인 후 투표할 수 있습니다.');
       return;
     }
-    const updated = { ...motmStore };
-    if (!updated[match.id]) updated[match.id] = {};
-    updated[match.id][user.username] = memberId;
-    setMotmStore(updated);
-    localStorage.setItem('classfc_motm', JSON.stringify(updated));
-    setMotmOpen(false);
+    setBusy(true);
+    try {
+      await api.post(`/api/matches/${match.id}/motm`, { memberId });
+      await loadAll();
+      setMotmOpen(false);
+    } catch (e) {
+      alert('투표 실패: ' + e.message);
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -132,17 +143,17 @@ function MatchCard({ match, user }) {
         <span className="venue-side">{match.homeAway === 'home' ? 'HOME' : 'AWAY'}</span>
       </div>
 
-      {!isFinished && officialLineup && (
+      {!isFinished && lineup && (
         <div className="match-lineup-block">
           <button
             className="lineup-toggle-btn"
             onClick={() => setLineupOpen(!lineupOpen)}
           >
             <span className="lineup-toggle-icon">📋</span>
-            공식 라인업 {officialLineup.formation}
+            공식 라인업 {lineup.formation}
             <span className="lineup-toggle-arrow">{lineupOpen ? '▲' : '▼'}</span>
           </button>
-          {lineupOpen && <LineupPitch lineup={officialLineup} />}
+          {lineupOpen && <LineupPitch lineup={lineup} />}
         </div>
       )}
 
@@ -156,17 +167,21 @@ function MatchCard({ match, user }) {
             <button
               className={myRsvp === 'attend' ? 'rsvp-btn active' : 'rsvp-btn'}
               onClick={() => handleRsvp('attend')}
+              disabled={busy}
             >
               참석
             </button>
             <button
               className={myRsvp === 'late' ? 'rsvp-btn late active' : 'rsvp-btn late'}
               onClick={() => handleRsvp('late')}
+              disabled={busy}
             >
               늦참
             </button>
             {myRsvp && (
-              <button className="rsvp-cancel-btn" onClick={handleCancelRsvp}>취소</button>
+              <button className="rsvp-cancel-btn" onClick={handleCancelRsvp} disabled={busy}>
+                취소
+              </button>
             )}
           </div>
         </div>
@@ -187,7 +202,7 @@ function MatchCard({ match, user }) {
 
           {!motmOpen ? (
             <button className="motm-vote-btn" onClick={() => setMotmOpen(true)}>
-              {myMotmVote ? '내 투표 변경' : 'MOTM 투표하기'}
+              MOTM 투표하기
             </button>
           ) : (
             <div className="motm-vote-panel">
@@ -196,8 +211,9 @@ function MatchCard({ match, user }) {
                 {members.map(m => (
                   <button
                     key={m.id}
-                    className={String(myMotmVote) === String(m.id) ? 'motm-pick active' : 'motm-pick'}
+                    className="motm-pick"
                     onClick={() => handleVoteMotm(m.id)}
+                    disabled={busy}
                   >
                     <span className="motm-pick-num">#{m.number}</span>
                     <span className="motm-pick-name">{m.name}</span>

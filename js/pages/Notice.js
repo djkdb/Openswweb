@@ -2,20 +2,14 @@ function Notice({ user }) {
   const [selected, setSelected] = React.useState(null);
   const [category, setCategory] = React.useState('전체');
   const [search, setSearch] = React.useState('');
-  const [commentsStore, setCommentsStore] = React.useState(
-    JSON.parse(localStorage.getItem('classfc_comments') || '{}')
-  );
+  const [comments, setComments] = React.useState([]);
   const [newComment, setNewComment] = React.useState('');
-
-  const localNotices = JSON.parse(localStorage.getItem('classfc_notices_extra') || '[]');
-  const allNotices = [...localNotices, ...notices];
+  const [busy, setBusy] = React.useState(false);
 
   const categories = ['전체', '공지', '경기', '모집', '운영'];
 
-  let displayed = allNotices;
-  if (category !== '전체') {
-    displayed = displayed.filter(n => n.category === category);
-  }
+  let displayed = notices;
+  if (category !== '전체') displayed = displayed.filter(n => n.category === category);
   if (search) {
     displayed = displayed.filter(n =>
       n.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -29,12 +23,25 @@ function Notice({ user }) {
     return b.date.localeCompare(a.date);
   });
 
+  const loadComments = async (id) => {
+    try {
+      const list = await api.get(`/api/notices/${id}/comments`);
+      setComments(list);
+    } catch {
+      setComments([]);
+    }
+  };
+
+  const openNotice = (n) => {
+    setSelected(n);
+    setNewComment('');
+    if (n.category !== '공지') loadComments(n.id);
+  };
+
   if (selected) {
     const isOfficial = selected.category === '공지';
-    const noticeKey = String(selected.id);
-    const comments = commentsStore[noticeKey] || [];
 
-    const handleAddComment = (e) => {
+    const handleAddComment = async (e) => {
       e.preventDefault();
       if (!user) {
         alert('로그인 후 댓글을 작성할 수 있습니다.');
@@ -42,27 +49,28 @@ function Notice({ user }) {
       }
       const text = newComment.trim();
       if (!text) return;
-      const item = {
-        id: Date.now(),
-        username: user.username,
-        name: user.name,
-        number: user.number,
-        text,
-        date: new Date().toISOString()
-      };
-      const updated = { ...commentsStore, [noticeKey]: [...comments, item] };
-      setCommentsStore(updated);
-      localStorage.setItem('classfc_comments', JSON.stringify(updated));
-      setNewComment('');
+      setBusy(true);
+      try {
+        await api.post(`/api/notices/${selected.id}/comments`, { text });
+        setNewComment('');
+        await loadComments(selected.id);
+      } catch (e) {
+        alert('댓글 등록 실패: ' + e.message);
+      } finally {
+        setBusy(false);
+      }
     };
 
-    const handleDeleteComment = (cid) => {
-      const updated = {
-        ...commentsStore,
-        [noticeKey]: comments.filter(c => c.id !== cid)
-      };
-      setCommentsStore(updated);
-      localStorage.setItem('classfc_comments', JSON.stringify(updated));
+    const handleDeleteComment = async (cid) => {
+      setBusy(true);
+      try {
+        await api.del(`/api/notices/${selected.id}/comments/${cid}`);
+        await loadComments(selected.id);
+      } catch (e) {
+        alert('삭제 실패: ' + e.message);
+      } finally {
+        setBusy(false);
+      }
     };
 
     return (
@@ -125,11 +133,14 @@ function Notice({ user }) {
                     <span className="comment-author">
                       #{c.number || '00'} {c.name}
                     </span>
-                    <span className="comment-date">{c.date.substring(0, 16).replace('T', ' ')}</span>
-                    {user && (user.username === c.username || user.role === 'admin') && (
+                    <span className="comment-date">
+                      {c.date ? c.date.substring(0, 16).replace('T', ' ') : ''}
+                    </span>
+                    {user && (user.id === c.accountId || user.role === 'admin') && (
                       <button
                         className="comment-delete"
                         onClick={() => handleDeleteComment(c.id)}
+                        disabled={busy}
                       >
                         삭제
                       </button>
@@ -152,10 +163,11 @@ function Notice({ user }) {
                   placeholder="댓글을 남겨보세요..."
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
+                  disabled={busy}
                 ></textarea>
                 <div className="comment-form-actions">
-                  <button type="submit" className="btn-primary-green comment-submit">
-                    등록
+                  <button type="submit" className="btn-primary-green comment-submit" disabled={busy}>
+                    {busy ? '등록 중...' : '등록'}
                   </button>
                 </div>
               </form>
@@ -203,7 +215,7 @@ function Notice({ user }) {
         <div className="row g-4">
           {sorted.map(n => (
             <div className="col-md-6" key={n.id}>
-              <NoticeCard notice={n} onClick={setSelected} compact={false} />
+              <NoticeCard notice={n} onClick={openNotice} compact={false} />
             </div>
           ))}
         </div>

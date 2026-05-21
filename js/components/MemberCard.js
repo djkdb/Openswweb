@@ -1,18 +1,5 @@
 function MemberCard({ member, onClick }) {
-  const motmStore = JSON.parse(localStorage.getItem('classfc_motm') || '{}');
-  let motmCount = 0;
-  for (const mid in motmStore) {
-    const tally = {};
-    for (const voter in motmStore[mid]) {
-      const id = motmStore[mid][voter];
-      tally[id] = (tally[id] || 0) + 1;
-    }
-    let winnerId = null, max = 0;
-    for (const id in tally) {
-      if (tally[id] > max) { winnerId = id; max = tally[id]; }
-    }
-    if (String(winnerId) === String(member.id)) motmCount++;
-  }
+  const motmCount = member.motm || 0;
 
   return (
     <div className="member-card card-fc" onClick={() => onClick(member)}>

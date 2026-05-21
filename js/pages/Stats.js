@@ -2,31 +2,7 @@ function Stats() {
   const [sortKey, setSortKey] = React.useState('goals');
   const [tab, setTab] = React.useState('scorers');
 
-  const motmStore = JSON.parse(localStorage.getItem('classfc_motm') || '{}');
-  const motmCounts = {};
-  for (const matchId in motmStore) {
-    const votes = motmStore[matchId];
-    const tally = {};
-    for (const voter in votes) {
-      const mid = votes[voter];
-      tally[mid] = (tally[mid] || 0) + 1;
-    }
-    let winnerId = null;
-    let winnerCount = 0;
-    for (const mid in tally) {
-      if (tally[mid] > winnerCount) {
-        winnerId = mid;
-        winnerCount = tally[mid];
-      }
-    }
-    if (winnerId) {
-      motmCounts[winnerId] = (motmCounts[winnerId] || 0) + 1;
-    }
-  }
-
-  const enriched = members.map(m => ({ ...m, motm: motmCounts[m.id] || 0 }));
-
-  let sorted = [...enriched];
+  let sorted = members.map(m => ({ ...m, motm: m.motm || 0 }));
   if (tab === 'scorers') sorted.sort((a, b) => b.goals - a.goals || b.assists - a.assists);
   else if (tab === 'assists') sorted.sort((a, b) => b.assists - a.assists || b.goals - a.goals);
   else if (tab === 'apps') sorted.sort((a, b) => b.matches - a.matches);
