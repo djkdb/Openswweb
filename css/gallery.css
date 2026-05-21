@@ -190,7 +190,7 @@
 }
 
 .gallery-modal-title {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-weight: 700;
   font-size: 1.4rem;
   color: var(--white);

@@ -1,8 +1,33 @@
+@font-face {
+  font-family: 'NEXON Football Gothic';
+  src: local('NEXON Football Gothic L'),
+       local('NEXONFootballGothic L'),
+       local('NEXONFootballGothicL'),
+       local('넥슨풋볼고딕 L'),
+       url('../assets/fonts/NEXONFootballGothicL.ttf') format('truetype');
+  font-weight: 300 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'NEXON Football Gothic';
+  src: local('NEXON Football Gothic B'),
+       local('NEXONFootballGothic B'),
+       local('NEXONFootballGothicB'),
+       local('넥슨풋볼고딕 B'),
+       url('../assets/fonts/NEXONFootballGothicB.ttf') format('truetype');
+  font-weight: 600 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --navy-900: #050b18;
   --navy-800: #0a1628;
   --navy-700: #112940;
   --navy-600: #1a3a5c;
+  --crest-navy: #1b2856;
   --green-500: #00d166;
   --green-400: #2eea7d;
   --green-300: #65f4a2;
@@ -13,6 +38,8 @@
   --danger: #ff4d5e;
   --card-bg: #0f1f33;
   --card-border: rgba(255, 255, 255, 0.06);
+  --font-display: 'NEXON Football Gothic', 'Bebas Neue', 'Inter', sans-serif;
+  --font-body: 'NEXON Football Gothic', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 * {
@@ -24,7 +51,7 @@ html, body {
   padding: 0;
   background: var(--navy-900);
   color: var(--white);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-body);
   min-height: 100vh;
 }
 
@@ -35,9 +62,10 @@ html, body {
 }
 
 h1, h2, h3, h4 {
-  font-family: 'Bebas Neue', 'Inter', sans-serif;
+  font-family: var(--font-display);
   letter-spacing: 1.5px;
   margin: 0;
+  font-weight: 800;
 }
 
 a {

@@ -4,7 +4,10 @@ function Footer() {
       <div className="container">
         <div className="fc-footer-grid">
           <div className="fc-footer-col">
-            <div className="fc-footer-brand">CLASS FC</div>
+            <div className="fc-footer-brand-row">
+              <img src="assets/img/classfc-logo.png" alt="CLASS FC" className="fc-footer-logo" />
+              <div className="fc-footer-brand">CLASS FC</div>
+            </div>
             <div className="fc-footer-tag">
               Building the digital home of our football family.
             </div>

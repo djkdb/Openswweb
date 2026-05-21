@@ -94,6 +94,12 @@ function Admin() {
           >
             경기 일정
           </button>
+          <button
+            className={section === 'rsvp' ? 'admin-side-btn active' : 'admin-side-btn'}
+            onClick={() => setSection('rsvp')}
+          >
+            참석 명단
+          </button>
         </aside>
 
         <main className="admin-content">
@@ -339,6 +345,68 @@ function Admin() {
               )}
             </div>
           )}
+
+          {section === 'rsvp' && (() => {
+            const rsvpStore = JSON.parse(localStorage.getItem('classfc_rsvp') || '{}');
+            const upcomingList = matches
+              .filter(m => m.status === 'upcoming')
+              .sort((a, b) => a.date.localeCompare(b.date));
+            return (
+              <div>
+                <h3 className="admin-block-title">예정 경기별 참석 명단</h3>
+                {upcomingList.length === 0 && (
+                  <div className="admin-empty">예정된 경기가 없습니다.</div>
+                )}
+                {upcomingList.map(m => {
+                  const list = rsvpStore[m.id] ? Object.values(rsvpStore[m.id]) : [];
+                  const attend = list.filter(r => r.status === 'attend');
+                  const late = list.filter(r => r.status === 'late');
+                  return (
+                    <div key={m.id} className="rsvp-admin-block">
+                      <div className="rsvp-admin-head">
+                        <div>
+                          <div className="rsvp-admin-date">{m.date} · {m.time}</div>
+                          <div className="rsvp-admin-vs">
+                            CLASS FC vs {m.opponent} <span className="text-secondary">({m.venue})</span>
+                          </div>
+                        </div>
+                        <div className="rsvp-admin-totals">
+                          <span className="rsvp-count-ok">참석 {attend.length}</span>
+                          <span className="rsvp-count-late">늦참 {late.length}</span>
+                        </div>
+                      </div>
+                      <div className="rsvp-admin-grid">
+                        <div>
+                          <div className="rsvp-admin-col-title">참석 ({attend.length})</div>
+                          {attend.length === 0 ? (
+                            <div className="rsvp-admin-empty">아직 없음</div>
+                          ) : (
+                            <ul className="rsvp-name-list">
+                              {attend.map(r => (
+                                <li key={r.name + r.number}>#{r.number} {r.name}</li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                        <div>
+                          <div className="rsvp-admin-col-title late-col">늦참 ({late.length})</div>
+                          {late.length === 0 ? (
+                            <div className="rsvp-admin-empty">아직 없음</div>
+                          ) : (
+                            <ul className="rsvp-name-list">
+                              {late.map(r => (
+                                <li key={r.name + r.number}>#{r.number} {r.name}</li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })()}
 
           {section === 'match' && (
             <div>

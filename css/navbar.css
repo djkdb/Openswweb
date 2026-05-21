@@ -23,33 +23,17 @@
   cursor: pointer;
 }
 
-.fc-brand-mark {
-  width: 46px;
-  height: 46px;
-  background: var(--green-500);
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  font-family: 'Bebas Neue', sans-serif;
-  color: var(--navy-900);
-  font-weight: 700;
-  letter-spacing: 0;
+.fc-brand-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+  transition: transform 0.25s ease;
 }
 
-.fc-brand-c {
-  font-size: 1.4rem;
-  position: absolute;
-  top: 4px;
-  left: 10px;
-}
-
-.fc-brand-fc {
-  font-size: 0.85rem;
-  position: absolute;
-  bottom: 4px;
-  right: 8px;
+.fc-brand:hover .fc-brand-logo {
+  transform: rotate(-6deg) scale(1.05);
 }
 
 .fc-brand-text {
@@ -58,7 +42,7 @@
 }
 
 .fc-brand-title {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.5rem;
   letter-spacing: 2px;
   color: var(--white);

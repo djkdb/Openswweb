@@ -83,7 +83,7 @@ function Login({ onLogin, setPage }) {
       <div className="container login-container">
         <div className="login-left">
           <div className="login-brand">
-            <div className="login-brand-mark">FC</div>
+            <img src="assets/img/classfc-logo.png" alt="CLASS FC" className="login-brand-logo" />
             <div className="login-brand-text">
               <div className="login-brand-title">CLASS FC</div>
               <div className="login-brand-sub">OFFICIAL CLUB ACCESS</div>

@@ -10,6 +10,7 @@ function Navbar({ page, setPage, user, onLogout }) {
     { id: 'home', label: 'HOME' },
     { id: 'members', label: 'MEMBERS' },
     { id: 'schedule', label: 'SCHEDULE' },
+    { id: 'stats', label: 'STATS' },
     { id: 'notice', label: 'NOTICE' },
     { id: 'gallery', label: 'GALLERY' }
   ];
@@ -18,10 +19,7 @@ function Navbar({ page, setPage, user, onLogout }) {
     <header className="fc-navbar">
       <div className="container fc-navbar-inner">
         <div className="fc-brand" onClick={() => goTo('home')}>
-          <div className="fc-brand-mark">
-            <span className="fc-brand-c">C</span>
-            <span className="fc-brand-fc">FC</span>
-          </div>
+          <img src="assets/img/classfc-logo.png" alt="CLASS FC" className="fc-brand-logo" />
           <div className="fc-brand-text">
             <div className="fc-brand-title">CLASS FC</div>
             <div className="fc-brand-sub">EST. 2013 · DEPT. OF SOFTWARE</div>

@@ -25,9 +25,10 @@ function App() {
   if (page === 'home') content = <Home setPage={setPage} user={user} />;
   else if (page === 'login') content = <Login onLogin={handleLogin} setPage={setPage} />;
   else if (page === 'members') content = <Members />;
-  else if (page === 'schedule') content = <Schedule />;
+  else if (page === 'schedule') content = <Schedule user={user} />;
   else if (page === 'notice') content = <Notice user={user} />;
   else if (page === 'gallery') content = <Gallery />;
+  else if (page === 'stats') content = <Stats />;
   else if (page === 'admin') {
     if (user && user.role === 'admin') {
       content = <Admin />;
@@ -45,10 +46,15 @@ function App() {
   }
   else content = <Home setPage={setPage} user={user} />;
 
+  const bannerClosed = typeof sessionStorage !== 'undefined' && sessionStorage.getItem('classfc_banner_closed') === '1';
+  const hasUpcoming = matches.some(m => m.status === 'upcoming');
+  const showBanner = !bannerClosed && hasUpcoming;
+
   return (
     <>
       <Navbar page={page} setPage={setPage} user={user} onLogout={handleLogout} />
-      <main className="app-main">
+      <CountdownBanner setPage={setPage} />
+      <main className={showBanner ? 'app-main with-banner' : 'app-main'}>
         {content}
       </main>
       <Footer />

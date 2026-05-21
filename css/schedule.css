@@ -18,7 +18,7 @@
 }
 
 .ss-num {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.8rem;
   color: var(--white);
   line-height: 1;
@@ -92,7 +92,7 @@
 }
 
 .match-date-big {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display);
   font-size: 2.4rem;
   color: var(--white);
   line-height: 1;
@@ -174,13 +174,13 @@
 }
 
 .match-vs-text {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.8rem;
   color: var(--gray-400);
 }
 
 .match-score {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display);
   font-size: 2.2rem;
   color: var(--white);
   display: flex;
@@ -214,6 +214,244 @@
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 1px;
+}
+
+.match-rsvp {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.rsvp-counts {
+  display: flex;
+  gap: 10px;
+}
+
+.rsvp-count-ok {
+  color: var(--green-400);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.rsvp-count-late {
+  color: #f5a623;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.rsvp-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.rsvp-btn {
+  background: rgba(0, 209, 102, 0.1);
+  border: 1px solid rgba(0, 209, 102, 0.35);
+  color: var(--green-400);
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 6px 14px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.rsvp-btn:hover {
+  background: rgba(0, 209, 102, 0.18);
+}
+
+.rsvp-btn.active {
+  background: var(--green-500);
+  color: var(--navy-900);
+}
+
+.rsvp-btn.late {
+  background: rgba(245, 166, 35, 0.1);
+  border-color: rgba(245, 166, 35, 0.35);
+  color: #f5a623;
+}
+
+.rsvp-btn.late:hover {
+  background: rgba(245, 166, 35, 0.18);
+}
+
+.rsvp-btn.late.active {
+  background: #f5a623;
+  color: var(--navy-900);
+}
+
+.rsvp-cancel-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--gray-400);
+  font-size: 0.75rem;
+  padding: 6px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.rsvp-cancel-btn:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.match-motm {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.motm-winner-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 0.88rem;
+}
+
+.motm-icon {
+  color: #f5a623;
+  font-size: 1.1rem;
+}
+
+.motm-label {
+  background: rgba(245, 166, 35, 0.18);
+  color: #f5a623;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.motm-name {
+  color: var(--white);
+  font-weight: 700;
+}
+
+.motm-votes {
+  color: var(--gray-400);
+  font-size: 0.78rem;
+  margin-left: auto;
+}
+
+.motm-empty {
+  color: var(--gray-400);
+  font-size: 0.8rem;
+  margin-bottom: 10px;
+  font-style: italic;
+}
+
+.motm-vote-btn {
+  width: 100%;
+  background: transparent;
+  border: 1px dashed rgba(245, 166, 35, 0.45);
+  color: #f5a623;
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 8px 12px;
+  border-radius: 3px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.15s;
+}
+
+.motm-vote-btn:hover {
+  background: rgba(245, 166, 35, 0.1);
+  border-style: solid;
+}
+
+.motm-vote-panel {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  padding: 12px;
+  margin-top: 8px;
+}
+
+.motm-panel-title {
+  color: var(--gray-200);
+  font-size: 0.8rem;
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+}
+
+.motm-player-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.motm-pick {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--gray-200);
+  padding: 8px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  text-align: left;
+  transition: all 0.15s;
+}
+
+.motm-pick:hover {
+  border-color: var(--green-500);
+  color: var(--white);
+}
+
+.motm-pick.active {
+  background: var(--green-500);
+  color: var(--navy-900);
+  border-color: var(--green-500);
+  font-weight: 700;
+}
+
+.motm-pick-num {
+  font-family: var(--font-display);
+  min-width: 32px;
+  color: var(--green-400);
+}
+
+.motm-pick.active .motm-pick-num {
+  color: var(--navy-900);
+}
+
+.motm-pick-name {
+  flex: 1;
+}
+
+.motm-pick-pos {
+  font-size: 0.65rem;
+  letter-spacing: 1px;
+  opacity: 0.75;
+}
+
+.motm-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--gray-400);
+  font-size: 0.75rem;
+  padding: 6px 10px;
+  margin-top: 8px;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+}
+
+.motm-close-btn:hover {
+  color: var(--white);
 }
 
 .schedule-empty {

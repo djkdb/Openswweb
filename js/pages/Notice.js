@@ -2,6 +2,10 @@ function Notice({ user }) {
   const [selected, setSelected] = React.useState(null);
   const [category, setCategory] = React.useState('전체');
   const [search, setSearch] = React.useState('');
+  const [commentsStore, setCommentsStore] = React.useState(
+    JSON.parse(localStorage.getItem('classfc_comments') || '{}')
+  );
+  const [newComment, setNewComment] = React.useState('');
 
   const localNotices = JSON.parse(localStorage.getItem('classfc_notices_extra') || '[]');
   const allNotices = [...localNotices, ...notices];
@@ -26,6 +30,41 @@ function Notice({ user }) {
   });
 
   if (selected) {
+    const isOfficial = selected.category === '공지';
+    const noticeKey = String(selected.id);
+    const comments = commentsStore[noticeKey] || [];
+
+    const handleAddComment = (e) => {
+      e.preventDefault();
+      if (!user) {
+        alert('로그인 후 댓글을 작성할 수 있습니다.');
+        return;
+      }
+      const text = newComment.trim();
+      if (!text) return;
+      const item = {
+        id: Date.now(),
+        username: user.username,
+        name: user.name,
+        number: user.number,
+        text,
+        date: new Date().toISOString()
+      };
+      const updated = { ...commentsStore, [noticeKey]: [...comments, item] };
+      setCommentsStore(updated);
+      localStorage.setItem('classfc_comments', JSON.stringify(updated));
+      setNewComment('');
+    };
+
+    const handleDeleteComment = (cid) => {
+      const updated = {
+        ...commentsStore,
+        [noticeKey]: comments.filter(c => c.id !== cid)
+      };
+      setCommentsStore(updated);
+      localStorage.setItem('classfc_comments', JSON.stringify(updated));
+    };
+
     return (
       <div className="container page-section notice-detail-page">
         <button onClick={() => setSelected(null)} className="link-arrow notice-back-btn">
@@ -54,6 +93,12 @@ function Notice({ user }) {
               <span>by <strong>{selected.author}</strong></span>
               <span className="meta-dot">·</span>
               <span>{selected.date}</span>
+              {!isOfficial && comments.length > 0 && (
+                <>
+                  <span className="meta-dot">·</span>
+                  <span>댓글 {comments.length}</span>
+                </>
+              )}
             </div>
           </div>
 
@@ -61,6 +106,66 @@ function Notice({ user }) {
 
           <div className="notice-detail-body">{selected.content}</div>
         </div>
+
+        {isOfficial ? (
+          <div className="comments-locked">
+            공지사항에는 댓글을 작성할 수 없습니다.
+          </div>
+        ) : (
+          <div className="comments-section">
+            <h3 className="comments-title">댓글 {comments.length}</h3>
+
+            <div className="comments-list">
+              {comments.length === 0 && (
+                <div className="comments-empty">첫 댓글을 남겨보세요.</div>
+              )}
+              {comments.map(c => (
+                <div className="comment-item" key={c.id}>
+                  <div className="comment-head">
+                    <span className="comment-author">
+                      #{c.number || '00'} {c.name}
+                    </span>
+                    <span className="comment-date">{c.date.substring(0, 16).replace('T', ' ')}</span>
+                    {user && (user.username === c.username || user.role === 'admin') && (
+                      <button
+                        className="comment-delete"
+                        onClick={() => handleDeleteComment(c.id)}
+                      >
+                        삭제
+                      </button>
+                    )}
+                  </div>
+                  <div className="comment-text">{c.text}</div>
+                </div>
+              ))}
+            </div>
+
+            {user ? (
+              <form className="comment-form" onSubmit={handleAddComment}>
+                <div className="comment-form-user">
+                  <span className="comment-form-num">#{user.number || '00'}</span>
+                  <span className="comment-form-name">{user.name}</span>
+                </div>
+                <textarea
+                  className="form-control-fc comment-textarea"
+                  rows="3"
+                  placeholder="댓글을 남겨보세요..."
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                ></textarea>
+                <div className="comment-form-actions">
+                  <button type="submit" className="btn-primary-green comment-submit">
+                    등록
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <div className="comments-login-hint">
+                댓글 작성은 로그인 후 가능합니다.
+              </div>
+            )}
+          </div>
+        )}
       </div>
     );
   }

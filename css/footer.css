@@ -12,12 +12,24 @@
   margin-bottom: 40px;
 }
 
+.fc-footer-brand-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.fc-footer-logo {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
 .fc-footer-brand {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display);
   font-size: 2.2rem;
   letter-spacing: 3px;
   color: var(--green-400);
-  margin-bottom: 12px;
 }
 
 .fc-footer-tag {
@@ -36,7 +48,7 @@
 
 .fc-footer-heading {
   color: var(--white);
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display);
   letter-spacing: 2px;
   font-size: 1rem;
   margin-bottom: 16px;

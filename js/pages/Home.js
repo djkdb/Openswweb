@@ -1,16 +1,28 @@
 function Home({ setPage, user }) {
   const [tick, setTick] = React.useState(0);
+  const [galleryOffset, setGalleryOffset] = React.useState(0);
+  const [galleryPaused, setGalleryPaused] = React.useState(false);
 
   React.useEffect(() => {
     const id = setInterval(() => setTick(t => t + 1), 1000);
     return () => clearInterval(id);
   }, []);
 
+  React.useEffect(() => {
+    if (galleryPaused) return;
+    const id = setInterval(() => {
+      setGalleryOffset(o => (o + 1) % galleryItems.length);
+    }, 3500);
+    return () => clearInterval(id);
+  }, [galleryPaused]);
+
   const upcoming = matches.filter(m => m.status === 'upcoming').sort((a, b) => a.date.localeCompare(b.date));
   const nextMatch = upcoming[0];
 
   const recentNotices = [...notices].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3);
-  const previewGallery = galleryItems.slice(0, 5);
+  const previewGallery = Array.from({ length: 5 }, (_, i) =>
+    galleryItems[(galleryOffset + i) % galleryItems.length]
+  );
 
   const totalGoals = members.reduce((s, m) => s + m.goals, 0);
   const totalMatches = matches.filter(m => m.status === 'finished').length;
@@ -36,7 +48,11 @@ function Home({ setPage, user }) {
     <div className="home-page">
       <section className="hero-section">
         <div className="hero-bg-grid"></div>
+        <img src="assets/img/classfc-logo.png" alt="" className="hero-watermark" />
         <div className="container hero-inner">
+          <div className="hero-crest-row">
+            <img src="assets/img/classfc-logo.png" alt="CLASS FC" className="hero-crest" />
+          </div>
           <div className="hero-meta">
             <span className="hero-est">EST. 2013</span>
             <span className="hero-dot">·</span>
@@ -99,7 +115,7 @@ function Home({ setPage, user }) {
                 </button>
               </div>
               <div className="next-match-card-wrap">
-                <MatchCard match={nextMatch} />
+                <MatchCard match={nextMatch} user={user} />
               </div>
             </div>
           </div>
@@ -140,10 +156,14 @@ function Home({ setPage, user }) {
             </button>
           </div>
 
-          <div className="gallery-preview-grid">
+          <div
+            className="gallery-preview-grid"
+            onMouseEnter={() => setGalleryPaused(true)}
+            onMouseLeave={() => setGalleryPaused(false)}
+          >
             {previewGallery.map((g, i) => (
               <div
-                key={g.id}
+                key={`${g.id}-${i}`}
                 className={`gallery-preview-tile tile-${i}`}
                 style={{ background: g.gradient }}
                 onClick={() => setPage('gallery')}
@@ -154,6 +174,19 @@ function Home({ setPage, user }) {
                 </div>
               </div>
             ))}
+          </div>
+
+          <div className="gallery-slide-dots">
+            {Array.from({ length: galleryItems.length }, (_, i) => (
+              <span
+                key={i}
+                className={i === galleryOffset ? 'slide-dot active' : 'slide-dot'}
+                onClick={() => setGalleryOffset(i)}
+              ></span>
+            ))}
+            <span className="slide-pause-hint">
+              {galleryPaused ? '⏸ 일시정지' : '▶ 자동 슬라이드'}
+            </span>
           </div>
         </div>
       </section>

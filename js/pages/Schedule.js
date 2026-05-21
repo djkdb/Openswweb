@@ -1,4 +1,4 @@
-function Schedule() {
+function Schedule({ user }) {
   const [tab, setTab] = React.useState('upcoming');
 
   const upcoming = matches
@@ -67,7 +67,7 @@ function Schedule() {
       <div className="row g-4">
         {list.map(m => (
           <div className="col-lg-6" key={m.id}>
-            <MatchCard match={m} />
+            <MatchCard match={m} user={user} />
           </div>
         ))}
       </div>
