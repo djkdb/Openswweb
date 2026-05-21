@@ -3,8 +3,8 @@ FONT INSTALLATION NOTE
 
 이 폴더에 다음 두 파일을 넣어 주세요 (선택):
 
-- NEXONFootballGothicL.ttf  (Light)
-- NEXONFootballGothicB.ttf  (Bold)
+- NEXONFOOTBALLGOTHICL.TTF  (Light)
+- NEXONFOOTBALLGOTHICB.TTF  (Bold)
 
 가져오는 방법:
 1. 프로젝트에 함께 받은 `5a56995a-NexonFootballGothic_all_win.exe` 를 Windows 에서 실행해 폰트를 설치

@@ -4,7 +4,7 @@
        local('NEXONFootballGothic L'),
        local('NEXONFootballGothicL'),
        local('넥슨풋볼고딕 L'),
-       url('../assets/fonts/NEXONFootballGothicL.ttf') format('truetype');
+       url('../assets/fonts/NEXONFOOTBALLGOTHICL.TTF') format('truetype');
   font-weight: 300 500;
   font-style: normal;
   font-display: swap;
@@ -16,7 +16,7 @@
        local('NEXONFootballGothic B'),
        local('NEXONFootballGothicB'),
        local('넥슨풋볼고딕 B'),
-       url('../assets/fonts/NEXONFootballGothicB.ttf') format('truetype');
+       url('../assets/fonts/NEXONFOOTBALLGOTHICB.TTF') format('truetype');
   font-weight: 600 900;
   font-style: normal;
   font-display: swap;
