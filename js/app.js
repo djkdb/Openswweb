@@ -29,6 +29,7 @@ function App() {
   else if (page === 'notice') content = <Notice user={user} />;
   else if (page === 'gallery') content = <Gallery />;
   else if (page === 'stats') content = <Stats />;
+  else if (page === 'squad') content = <SquadMaker user={user} />;
   else if (page === 'admin') {
     if (user && user.role === 'admin') {
       content = <Admin />;

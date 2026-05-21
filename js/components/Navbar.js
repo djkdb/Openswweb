@@ -11,6 +11,7 @@ function Navbar({ page, setPage, user, onLogout }) {
     { id: 'members', label: 'MEMBERS' },
     { id: 'schedule', label: 'SCHEDULE' },
     { id: 'stats', label: 'STATS' },
+    { id: 'squad', label: 'SQUAD' },
     { id: 'notice', label: 'NOTICE' },
     { id: 'gallery', label: 'GALLERY' }
   ];

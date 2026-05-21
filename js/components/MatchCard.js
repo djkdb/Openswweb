@@ -6,6 +6,10 @@ function MatchCard({ match, user }) {
     JSON.parse(localStorage.getItem('classfc_motm') || '{}')
   );
   const [motmOpen, setMotmOpen] = React.useState(false);
+  const [lineupOpen, setLineupOpen] = React.useState(false);
+
+  const lineupStore = JSON.parse(localStorage.getItem('classfc_lineups') || '{}');
+  const officialLineup = lineupStore[match.id] || null;
 
   const d = new Date(match.date);
   const dateLabel = `${d.getMonth() + 1}.${String(d.getDate()).padStart(2, '0')}`;
@@ -127,6 +131,20 @@ function MatchCard({ match, user }) {
         <span className="venue-pin">●</span> {match.venue}
         <span className="venue-side">{match.homeAway === 'home' ? 'HOME' : 'AWAY'}</span>
       </div>
+
+      {!isFinished && officialLineup && (
+        <div className="match-lineup-block">
+          <button
+            className="lineup-toggle-btn"
+            onClick={() => setLineupOpen(!lineupOpen)}
+          >
+            <span className="lineup-toggle-icon">📋</span>
+            공식 라인업 {officialLineup.formation}
+            <span className="lineup-toggle-arrow">{lineupOpen ? '▲' : '▼'}</span>
+          </button>
+          {lineupOpen && <LineupPitch lineup={officialLineup} />}
+        </div>
+      )}
 
       {!isFinished && (
         <div className="match-rsvp">
