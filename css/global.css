@@ -1,0 +1,194 @@
+:root {
+  --navy-900: #050b18;
+  --navy-800: #0a1628;
+  --navy-700: #112940;
+  --navy-600: #1a3a5c;
+  --green-500: #00d166;
+  --green-400: #2eea7d;
+  --green-300: #65f4a2;
+  --white: #ffffff;
+  --gray-200: #d9dee5;
+  --gray-400: #8a96a8;
+  --gray-600: #4a5566;
+  --danger: #ff4d5e;
+  --card-bg: #0f1f33;
+  --card-border: rgba(255, 255, 255, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--navy-900);
+  color: var(--white);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Bebas Neue', 'Inter', sans-serif;
+  letter-spacing: 1.5px;
+  margin: 0;
+}
+
+a {
+  color: var(--green-400);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--green-300);
+}
+
+button {
+  font-family: inherit;
+}
+
+.app-main {
+  flex: 1;
+  padding-top: 78px;
+}
+
+.page-section {
+  padding: 60px 0 80px;
+}
+
+.section-title {
+  font-size: 3rem;
+  color: var(--white);
+  margin-bottom: 10px;
+}
+
+.section-subtitle {
+  color: var(--gray-400);
+  font-size: 0.95rem;
+  margin-bottom: 36px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.green-accent {
+  color: var(--green-400);
+}
+
+.btn-primary-green {
+  background: var(--green-500);
+  border: none;
+  color: var(--navy-900);
+  font-weight: 700;
+  padding: 12px 28px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  letter-spacing: 0.5px;
+}
+
+.btn-primary-green:hover {
+  background: var(--green-400);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 209, 102, 0.25);
+  color: var(--navy-900);
+}
+
+.btn-outline-green {
+  background: transparent;
+  border: 2px solid var(--green-500);
+  color: var(--green-400);
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.btn-outline-green:hover {
+  background: var(--green-500);
+  color: var(--navy-900);
+}
+
+.card-fc {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 24px;
+  transition: all 0.25s ease;
+}
+
+.card-fc:hover {
+  transform: translateY(-4px);
+  border-color: rgba(0, 209, 102, 0.35);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 209, 102, 0.1);
+}
+
+.badge-green {
+  background: rgba(0, 209, 102, 0.15);
+  color: var(--green-400);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+.badge-red {
+  background: rgba(255, 77, 94, 0.15);
+  color: var(--danger);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.divider-line {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--green-500), transparent);
+  margin: 20px 0;
+}
+
+.form-control-fc {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--white);
+  padding: 12px 16px;
+  border-radius: 4px;
+  width: 100%;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+
+.form-control-fc:focus {
+  outline: none;
+  border-color: var(--green-500);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.form-control-fc::placeholder {
+  color: var(--gray-600);
+}
+
+.label-fc {
+  color: var(--gray-200);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  display: block;
+  font-weight: 600;
+}
+
+.text-secondary { color: var(--gray-400) !important; }
+
+@media (max-width: 768px) {
+  .section-title { font-size: 2.2rem; }
+  .page-section { padding: 40px 0 60px; }
+}

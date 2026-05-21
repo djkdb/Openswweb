@@ -1,0 +1,44 @@
+function MemberCard({ member, onClick }) {
+  return (
+    <div className="member-card card-fc" onClick={() => onClick(member)}>
+      <div className="member-card-top">
+        <div className="member-number">#{member.number}</div>
+        <div
+          className="member-pos-badge"
+          style={{ background: positionColor[member.position] + '22', color: positionColor[member.position] }}
+        >
+          {member.position}
+        </div>
+      </div>
+
+      <div className="member-avatar">
+        <div className="member-avatar-circle">
+          {member.name.charAt(0)}
+        </div>
+      </div>
+
+      <div className="member-card-body">
+        <div className="member-name">{member.name}</div>
+        <div className="member-name-en">{member.nameEn}</div>
+        {member.role !== 'Member' && (
+          <div className="member-role-tag">{member.role}</div>
+        )}
+      </div>
+
+      <div className="member-card-stats">
+        <div className="stat-block">
+          <div className="stat-num">{member.matches}</div>
+          <div className="stat-label">MATCHES</div>
+        </div>
+        <div className="stat-block">
+          <div className="stat-num">{member.goals}</div>
+          <div className="stat-label">GOALS</div>
+        </div>
+        <div className="stat-block">
+          <div className="stat-num">{member.assists}</div>
+          <div className="stat-label">ASSISTS</div>
+        </div>
+      </div>
+    </div>
+  );
+}

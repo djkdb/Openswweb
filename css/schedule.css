@@ -1,0 +1,230 @@
+.schedule-page {
+  min-height: 80vh;
+}
+
+.schedule-stats-row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+  margin-bottom: 36px;
+}
+
+.schedule-stat-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 16px;
+  text-align: center;
+}
+
+.ss-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem;
+  color: var(--white);
+  line-height: 1;
+}
+
+.ss-label {
+  color: var(--gray-400);
+  font-size: 0.7rem;
+  letter-spacing: 1.5px;
+  margin-top: 6px;
+}
+
+.schedule-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 30px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sched-tab {
+  background: transparent;
+  border: none;
+  color: var(--gray-400);
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  font-size: 0.85rem;
+  padding: 14px 24px;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.sched-tab:hover {
+  color: var(--white);
+}
+
+.sched-tab.active {
+  color: var(--green-400);
+}
+
+.sched-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 24px;
+  right: 24px;
+  height: 2px;
+  background: var(--green-500);
+}
+
+.match-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.match-card.is-finished {
+  opacity: 0.92;
+}
+
+.match-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.match-date-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.match-date-big {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.4rem;
+  color: var(--white);
+  line-height: 1;
+}
+
+.match-date-day {
+  color: var(--gray-400);
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+.match-tags {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+}
+
+.match-type-tag {
+  padding: 4px 10px;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.type-league { background: rgba(0, 209, 102, 0.15); color: var(--green-400); }
+.type-cup { background: rgba(245, 166, 35, 0.15); color: #f5a623; }
+.type-friendly { background: rgba(74, 144, 226, 0.15); color: #4a90e2; }
+
+.match-result-tag, .match-upcoming-tag {
+  padding: 4px 10px;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.result-win { background: var(--green-500); color: var(--navy-900); }
+.result-loss { background: var(--danger); color: var(--white); }
+.result-draw { background: rgba(255, 255, 255, 0.1); color: var(--white); }
+
+.match-upcoming-tag {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--gray-200);
+}
+
+.match-teams {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 16px;
+}
+
+.match-team-home, .match-team-away {
+  text-align: center;
+}
+
+.match-team-name {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--white);
+}
+
+.match-team-sub {
+  color: var(--gray-400);
+  font-size: 0.75rem;
+  margin-top: 4px;
+  letter-spacing: 1px;
+}
+
+.match-vs {
+  text-align: center;
+  min-width: 80px;
+}
+
+.match-vs-text {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem;
+  color: var(--gray-400);
+}
+
+.match-score {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.2rem;
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+}
+
+.score-ours { color: var(--green-400); }
+.score-theirs { color: var(--white); }
+.score-dash { color: var(--gray-600); }
+
+.match-venue {
+  color: var(--gray-200);
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.venue-pin {
+  color: var(--green-500);
+  font-size: 0.5rem;
+}
+
+.venue-side {
+  margin-left: auto;
+  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.schedule-empty {
+  padding: 80px 0;
+  text-align: center;
+  color: var(--gray-400);
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  .schedule-stats-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

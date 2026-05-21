@@ -1,0 +1,310 @@
+.home-page {
+  width: 100%;
+}
+
+.hero-section {
+  position: relative;
+  min-height: calc(100vh - 78px);
+  display: flex;
+  align-items: center;
+  background:
+    radial-gradient(ellipse at 70% 30%, rgba(0, 209, 102, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 20% 80%, rgba(74, 144, 226, 0.08) 0%, transparent 50%),
+    var(--navy-900);
+  overflow: hidden;
+  padding: 80px 0 60px;
+}
+
+.hero-bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: var(--green-400);
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  margin-bottom: 24px;
+  font-weight: 600;
+}
+
+.hero-est {
+  border: 1px solid var(--green-500);
+  padding: 4px 10px;
+  border-radius: 3px;
+}
+
+.hero-dot {
+  color: var(--gray-600);
+}
+
+.hero-dept {
+  color: var(--gray-200);
+}
+
+.hero-title {
+  font-size: clamp(4rem, 12vw, 9rem);
+  line-height: 1;
+  color: var(--white);
+  letter-spacing: 4px;
+  margin-bottom: 28px;
+}
+
+.hero-slogan {
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--gray-200);
+  margin-bottom: 12px;
+  max-width: 540px;
+}
+
+.hero-sub {
+  color: var(--gray-400);
+  font-size: 0.95rem;
+  margin-bottom: 36px;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 60px;
+  flex-wrap: wrap;
+}
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  max-width: 540px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 28px;
+}
+
+.hero-stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.6rem;
+  color: var(--green-400);
+  line-height: 1;
+}
+
+.hero-stat-label {
+  color: var(--gray-400);
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  margin-top: 4px;
+}
+
+.hero-side-text {
+  position: absolute;
+  right: -110px;
+  top: 50%;
+  transform: rotate(90deg);
+  color: rgba(255, 255, 255, 0.05);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 7rem;
+  letter-spacing: 8px;
+  white-space: nowrap;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.next-match-section {
+  background: linear-gradient(180deg, var(--navy-900) 0%, var(--navy-800) 100%);
+  padding: 60px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.next-match-row {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.next-match-label .badge-green {
+  margin-bottom: 16px;
+}
+
+.next-match-title {
+  font-size: 2.5rem;
+  color: var(--white);
+  margin-bottom: 18px;
+}
+
+.countdown-text {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem;
+  color: var(--green-400);
+  letter-spacing: 2px;
+}
+
+.home-section {
+  padding: 80px 0;
+  background: var(--navy-900);
+}
+
+.home-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 40px;
+}
+
+.link-arrow {
+  background: transparent;
+  border: none;
+  color: var(--green-400);
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  font-size: 0.85rem;
+  transition: transform 0.2s;
+}
+
+.link-arrow:hover {
+  transform: translateX(4px);
+}
+
+.gallery-preview-section {
+  background: var(--navy-800);
+}
+
+.gallery-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: 200px 200px;
+  gap: 12px;
+}
+
+.gallery-preview-tile {
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.gallery-preview-tile:hover {
+  transform: scale(1.02);
+}
+
+.tile-0 { grid-column: span 2; grid-row: span 2; }
+.tile-1 { grid-column: span 2; }
+.tile-2 { grid-column: span 2; }
+.tile-3 { grid-column: span 2; }
+.tile-4 { grid-column: span 2; }
+
+.gallery-tile-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.85) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 16px;
+}
+
+.gallery-tile-tag {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--white);
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  align-self: flex-start;
+  margin-bottom: 6px;
+}
+
+.gallery-tile-title {
+  color: var(--white);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.home-cta-section {
+  background: var(--navy-900);
+  padding: 80px 0;
+}
+
+.home-cta-box {
+  background: linear-gradient(135deg, var(--navy-700) 0%, var(--navy-800) 100%);
+  border: 1px solid rgba(0, 209, 102, 0.2);
+  border-radius: 10px;
+  padding: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.home-cta-box::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(0, 209, 102, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.cta-title {
+  font-size: 2.4rem;
+  color: var(--white);
+  margin: 14px 0 10px;
+}
+
+.cta-desc {
+  color: var(--gray-200);
+  margin: 0;
+  max-width: 480px;
+}
+
+@media (max-width: 960px) {
+  .next-match-row {
+    grid-template-columns: 1fr;
+  }
+  .gallery-preview-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 180px);
+  }
+  .tile-0 { grid-column: span 2; grid-row: span 1; }
+  .tile-1, .tile-2, .tile-3, .tile-4, .tile-5 { grid-column: span 1; }
+  .hero-side-text { display: none; }
+  .home-cta-box {
+    flex-direction: column;
+    text-align: left;
+    align-items: flex-start;
+  }
+  .home-section-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .hero-stat-num { font-size: 2rem; }
+  .countdown-text { font-size: 1.3rem; }
+  .home-cta-box { padding: 28px; }
+  .cta-title { font-size: 1.8rem; }
+}
