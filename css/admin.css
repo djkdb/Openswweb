@@ -314,6 +314,11 @@ select.form-control-fc {
   padding-right: 36px;
 }
 
+select.form-control-fc option {
+  background: #0f1f33;
+  color: #ffffff;
+}
+
 @media (max-width: 900px) {
   .admin-layout {
     grid-template-columns: 1fr;

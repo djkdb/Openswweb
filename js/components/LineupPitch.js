@@ -16,14 +16,25 @@ function LineupPitch({ lineup }) {
         {slots.map(slot => {
           const memberId = lineup.assignments[slot.id];
           const m = memberId ? findMember(memberId) : null;
+          const color = m ? positionColor[m.position] : null;
           return (
             <div
               key={slot.id}
               className={`lineup-slot ${m ? 'filled' : 'empty'}`}
               style={{ left: `${slot.x}%`, top: `${slot.y}%` }}
             >
-              <div className="lineup-pos">{slot.label}</div>
-              <div className="lineup-shirt">
+              <div
+                className="lineup-pos"
+                style={color ? { color: color } : null}
+              >
+                {slot.label}
+              </div>
+              <div
+                className="lineup-shirt"
+                style={color ? {
+                  background: `linear-gradient(180deg, ${color} 0%, ${color}cc 100%)`
+                } : null}
+              >
                 {m ? <span className="lineup-num">{m.number}</span> : <span>—</span>}
               </div>
               <div className="lineup-name">{m ? m.name : '미정'}</div>

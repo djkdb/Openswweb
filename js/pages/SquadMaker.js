@@ -260,6 +260,7 @@ function SquadMaker({ user }) {
                 const memberId = assignments[slot.id];
                 const m = memberId ? findMember(memberId) : null;
                 const isSelected = selectedSlot === slot.id;
+                const color = m ? positionColor[m.position] : null;
                 return (
                   <div
                     key={slot.id}
@@ -267,12 +268,20 @@ function SquadMaker({ user }) {
                     style={{ left: `${slot.x}%`, top: `${slot.y}%` }}
                     onClick={() => handleSlotClick(slot.id)}
                   >
-                    <div className="pitch-slot-label">{slot.label}</div>
-                    <div className="pitch-shirt">
+                    <div
+                      className="pitch-slot-label"
+                      style={color ? { color: color } : null}
+                    >
+                      {slot.label}
+                    </div>
+                    <div
+                      className="pitch-shirt"
+                      style={color ? {
+                        background: `linear-gradient(180deg, ${color} 0%, ${color}cc 100%)`
+                      } : null}
+                    >
                       {m ? (
-                        <>
-                          <span className="pitch-shirt-num">{m.number}</span>
-                        </>
+                        <span className="pitch-shirt-num">{m.number}</span>
                       ) : (
                         <span className="pitch-shirt-empty">+</span>
                       )}

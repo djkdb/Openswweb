@@ -365,16 +365,12 @@
 
 .pitch-slot-label {
   background: rgba(0, 0, 0, 0.55);
-  color: var(--danger);
+  color: var(--gray-400);
   font-family: var(--font-display);
   font-size: 0.72rem;
   padding: 2px 8px;
   border-radius: 3px;
   letter-spacing: 1px;
-}
-
-.pitch-slot.filled .pitch-slot-label {
-  color: var(--green-400);
 }
 
 .pitch-shirt {
@@ -399,8 +395,7 @@
 }
 
 .pitch-slot.filled .pitch-shirt {
-  background: linear-gradient(180deg, var(--green-400) 0%, var(--green-500) 100%);
-  border-color: rgba(0, 0, 0, 0.3);
+  border-color: rgba(0, 0, 0, 0.35);
 }
 
 .pitch-shirt-num {
@@ -409,6 +404,7 @@
   color: var(--navy-900);
   font-weight: 800;
   padding-top: 12px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.2);
 }
 
 .pitch-shirt-empty {
@@ -544,7 +540,7 @@
 .lineup-shirt {
   width: 34px;
   height: 34px;
-  background: linear-gradient(180deg, var(--green-400) 0%, var(--green-500) 100%);
+  background: rgba(255, 255, 255, 0.08);
   clip-path: polygon(
     0 18%, 24% 18%, 30% 0, 70% 0, 76% 18%,
     100% 18%, 100% 36%, 80% 36%, 80% 100%, 20% 100%, 20% 36%, 0 36%
@@ -552,11 +548,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(0, 0, 0, 0.3);
-}
-
-.lineup-slot.empty .lineup-shirt {
-  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.35);
 }
 
 .lineup-num {
