@@ -2,17 +2,23 @@ function Stats() {
   const [sortKey, setSortKey] = React.useState('goals');
   const [tab, setTab] = React.useState('scorers');
 
-  let sorted = members.map(m => ({ ...m, motm: m.motm || 0 }));
+  let sorted = members.map(m => ({ ...m, motm: m.motm || 0, cleanSheets: m.cleanSheets || 0 }));
+  if (tab === 'clean') sorted = sorted.filter(m => m.position === 'GK');
+  if (tab === 'scorers') sorted = sorted.filter(m => m.position !== 'GK');
+  if (tab === 'assists') sorted = sorted.filter(m => m.position !== 'GK');
+
   if (tab === 'scorers') sorted.sort((a, b) => b.goals - a.goals || b.assists - a.assists);
   else if (tab === 'assists') sorted.sort((a, b) => b.assists - a.assists || b.goals - a.goals);
   else if (tab === 'apps') sorted.sort((a, b) => b.matches - a.matches);
   else if (tab === 'motm') sorted.sort((a, b) => b.motm - a.motm);
+  else if (tab === 'clean') sorted.sort((a, b) => b.cleanSheets - a.cleanSheets);
 
   const topVal = (m) => {
     if (tab === 'scorers') return m.goals;
     if (tab === 'assists') return m.assists;
     if (tab === 'apps') return m.matches;
     if (tab === 'motm') return m.motm;
+    if (tab === 'clean') return m.cleanSheets;
     return 0;
   };
 
@@ -22,7 +28,8 @@ function Stats() {
     scorers: { title: '득점왕', sub: 'TOP SCORERS', col: 'GOALS' },
     assists: { title: '도움왕', sub: 'TOP ASSISTERS', col: 'ASSISTS' },
     apps: { title: '출장왕', sub: 'MOST APPEARANCES', col: 'MATCHES' },
-    motm: { title: 'MOTM 랭킹', sub: 'MAN OF THE MATCH', col: 'MOTM' }
+    motm: { title: 'MOTM 랭킹', sub: 'MAN OF THE MATCH', col: 'MOTM' },
+    clean: { title: '클린시트', sub: 'CLEAN SHEETS', col: 'CS' }
   };
 
   const current = labelMap[tab];
@@ -57,6 +64,12 @@ function Stats() {
         >
           MOTM
         </button>
+        <button
+          className={tab === 'clean' ? 'stats-tab active' : 'stats-tab'}
+          onClick={() => setTab('clean')}
+        >
+          클린시트
+        </button>
       </div>
 
       <div className="stats-table-wrap card-fc">
@@ -67,10 +80,16 @@ function Stats() {
               <th>선수</th>
               <th className="num-col">POS</th>
               <th className="num-col">M</th>
-              <th className="num-col">G</th>
-              <th className="num-col">A</th>
-              <th className="num-col">MOTM</th>
-              <th className="num-col current-col">{current.col}</th>
+              {tab === 'clean' ? (
+                <th className="num-col current-col">{current.col}</th>
+              ) : (
+                <>
+                  <th className="num-col">G</th>
+                  <th className="num-col">A</th>
+                  <th className="num-col">MOTM</th>
+                  <th className="num-col current-col">{current.col}</th>
+                </>
+              )}
             </tr>
           </thead>
           <tbody>
@@ -100,12 +119,20 @@ function Stats() {
                   </span>
                 </td>
                 <td className="num-col">{m.matches}</td>
-                <td className="num-col">{m.goals}</td>
-                <td className="num-col">{m.assists}</td>
-                <td className="num-col">{m.motm}</td>
-                <td className="num-col current-col">
-                  <strong>{topVal(m)}</strong>
-                </td>
+                {tab === 'clean' ? (
+                  <td className="num-col current-col">
+                    <strong>{topVal(m)}</strong>
+                  </td>
+                ) : (
+                  <>
+                    <td className="num-col">{m.goals}</td>
+                    <td className="num-col">{m.assists}</td>
+                    <td className="num-col">{m.motm}</td>
+                    <td className="num-col current-col">
+                      <strong>{topVal(m)}</strong>
+                    </td>
+                  </>
+                )}
               </tr>
             ))}
           </tbody>

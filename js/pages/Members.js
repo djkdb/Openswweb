@@ -81,14 +81,23 @@ function Members() {
                 <div className="modal-stat-num">{selected.matches}</div>
                 <div className="modal-stat-label">MATCHES</div>
               </div>
-              <div className="modal-stat">
-                <div className="modal-stat-num">{selected.goals}</div>
-                <div className="modal-stat-label">GOALS</div>
-              </div>
-              <div className="modal-stat">
-                <div className="modal-stat-num">{selected.assists}</div>
-                <div className="modal-stat-label">ASSISTS</div>
-              </div>
+              {selected.position === 'GK' ? (
+                <div className="modal-stat">
+                  <div className="modal-stat-num">{selected.cleanSheets || 0}</div>
+                  <div className="modal-stat-label">CLEAN SHEETS</div>
+                </div>
+              ) : (
+                <>
+                  <div className="modal-stat">
+                    <div className="modal-stat-num">{selected.goals}</div>
+                    <div className="modal-stat-label">GOALS</div>
+                  </div>
+                  <div className="modal-stat">
+                    <div className="modal-stat-num">{selected.assists}</div>
+                    <div className="modal-stat-label">ASSISTS</div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

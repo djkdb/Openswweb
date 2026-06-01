@@ -7,7 +7,7 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   const [members] = await pool.query(
     `SELECT id, number, name, name_en AS nameEn, position, role, year,
-            goals, assists, matches_played AS matches, bio
+            goals, assists, clean_sheets AS cleanSheets, matches_played AS matches, bio
      FROM members ORDER BY number`
   );
 
@@ -36,7 +36,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   const [rows] = await pool.query(
     `SELECT id, number, name, name_en AS nameEn, position, role, year,
-            goals, assists, matches_played AS matches, bio
+            goals, assists, clean_sheets AS cleanSheets, matches_played AS matches, bio
      FROM members WHERE id = ?`, [req.params.id]
   );
   if (rows.length === 0) return res.status(404).json({ error: 'not found' });
@@ -44,19 +44,20 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', auth, adminOnly, async (req, res) => {
-  const { number, name, nameEn, position, role, year, bio } = req.body || {};
+  const { number, name, nameEn, position, role, year, bio, goals, assists, cleanSheets, matches } = req.body || {};
   const [r] = await pool.query(
-    `INSERT INTO members (number, name, name_en, position, role, year, bio)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    [number, name, nameEn || null, position, role || 'Member', year || null, bio || null]
+    `INSERT INTO members (number, name, name_en, position, role, year, goals, assists, clean_sheets, matches_played, bio)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [number, name, nameEn || null, position, role || 'Member', year || null,
+     goals || 0, assists || 0, cleanSheets || 0, matches || 0, bio || null]
   );
   res.json({ id: r.insertId });
 });
 
 router.put('/:id', auth, adminOnly, async (req, res) => {
-  const fields = ['number', 'name', 'name_en', 'position', 'role', 'year', 'goals', 'assists', 'matches_played', 'bio'];
+  const fields = ['number', 'name', 'name_en', 'position', 'role', 'year', 'goals', 'assists', 'clean_sheets', 'matches_played', 'bio'];
   const body = req.body || {};
-  const map = { name_en: 'nameEn', matches_played: 'matches' };
+  const map = { name_en: 'nameEn', matches_played: 'matches', clean_sheets: 'cleanSheets' };
   const sets = [], values = [];
   for (const f of fields) {
     const key = map[f] || f;

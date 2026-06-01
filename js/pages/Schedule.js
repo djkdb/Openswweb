@@ -1,19 +1,24 @@
 function Schedule({ user }) {
   const [tab, setTab] = React.useState('upcoming');
+  const [sport, setSport] = React.useState('all');
+
+  const bySport = (m) => sport === 'all' || (m.sport || 'football') === sport;
 
   const upcoming = matches
     .filter(m => m.status === 'upcoming')
+    .filter(bySport)
     .sort((a, b) => a.date.localeCompare(b.date));
 
   const finished = matches
     .filter(m => m.status === 'finished')
+    .filter(bySport)
     .sort((a, b) => b.date.localeCompare(a.date));
 
   const winCount = finished.filter(m => m.scoreOurs > m.scoreTheirs).length;
   const drawCount = finished.filter(m => m.scoreOurs === m.scoreTheirs).length;
   const lossCount = finished.filter(m => m.scoreOurs < m.scoreTheirs).length;
-  const goalsFor = finished.reduce((s, m) => s + m.scoreOurs, 0);
-  const goalsAgainst = finished.reduce((s, m) => s + m.scoreTheirs, 0);
+  const goalsFor = finished.reduce((s, m) => s + (m.scoreOurs || 0), 0);
+  const goalsAgainst = finished.reduce((s, m) => s + (m.scoreTheirs || 0), 0);
 
   const list = tab === 'upcoming' ? upcoming : finished;
 
@@ -21,6 +26,27 @@ function Schedule({ user }) {
     <div className="container page-section schedule-page">
       <div className="section-subtitle">FIXTURES</div>
       <h2 className="section-title">경기 일정</h2>
+
+      <div className="sport-filter-row">
+        <button
+          className={sport === 'all' ? 'sport-filter-btn active' : 'sport-filter-btn'}
+          onClick={() => setSport('all')}
+        >
+          전체
+        </button>
+        <button
+          className={sport === 'football' ? 'sport-filter-btn active' : 'sport-filter-btn'}
+          onClick={() => setSport('football')}
+        >
+          ⚽ 축구
+        </button>
+        <button
+          className={sport === 'futsal' ? 'sport-filter-btn active' : 'sport-filter-btn'}
+          onClick={() => setSport('futsal')}
+        >
+          🤾 풋살
+        </button>
+      </div>
 
       <div className="schedule-stats-row">
         <div className="schedule-stat-card">

@@ -36,14 +36,23 @@ function MemberCard({ member, onClick }) {
           <div className="stat-num">{member.matches}</div>
           <div className="stat-label">MATCHES</div>
         </div>
-        <div className="stat-block">
-          <div className="stat-num">{member.goals}</div>
-          <div className="stat-label">GOALS</div>
-        </div>
-        <div className="stat-block">
-          <div className="stat-num">{member.assists}</div>
-          <div className="stat-label">ASSISTS</div>
-        </div>
+        {member.position === 'GK' ? (
+          <div className="stat-block">
+            <div className="stat-num">{member.cleanSheets || 0}</div>
+            <div className="stat-label">CLEAN SHEETS</div>
+          </div>
+        ) : (
+          <>
+            <div className="stat-block">
+              <div className="stat-num">{member.goals}</div>
+              <div className="stat-label">GOALS</div>
+            </div>
+            <div className="stat-block">
+              <div className="stat-num">{member.assists}</div>
+              <div className="stat-label">ASSISTS</div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

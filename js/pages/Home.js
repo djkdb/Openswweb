@@ -16,7 +16,11 @@ function Home({ setPage, user }) {
     return () => clearInterval(id);
   }, [galleryPaused]);
 
-  const upcoming = matches.filter(m => m.status === 'upcoming').sort((a, b) => a.date.localeCompare(b.date));
+  const nowMs = Date.now();
+  const upcoming = matches
+    .filter(m => m.status === 'upcoming')
+    .filter(m => new Date(`${m.date}T${m.time}:00`).getTime() > nowMs)
+    .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
   const nextMatch = upcoming[0];
 
   const recentNotices = [...notices].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3);

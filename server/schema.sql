@@ -36,6 +36,7 @@ CREATE TABLE members (
   year INT,
   goals INT DEFAULT 0,
   assists INT DEFAULT 0,
+  clean_sheets INT DEFAULT 0,
   matches_played INT DEFAULT 0,
   bio TEXT,
   FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE SET NULL
@@ -49,11 +50,13 @@ CREATE TABLE matches (
   opponent_dept VARCHAR(60),
   venue VARCHAR(120),
   match_type ENUM('League', 'Cup', 'Friendly') DEFAULT 'League',
+  sport ENUM('football', 'futsal') DEFAULT 'football',
   status ENUM('upcoming', 'finished', 'cancelled') DEFAULT 'upcoming',
   home_away ENUM('home', 'away') DEFAULT 'home',
   score_ours INT,
   score_theirs INT,
-  INDEX idx_status_date (status, match_date)
+  INDEX idx_status_date (status, match_date),
+  INDEX idx_sport (sport)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE notices (

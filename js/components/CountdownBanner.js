@@ -11,14 +11,16 @@ function CountdownBanner({ setPage }) {
 
   if (closed) return null;
 
+  const nowMs = Date.now();
   const upcoming = matches
     .filter(m => m.status === 'upcoming')
-    .sort((a, b) => a.date.localeCompare(b.date));
+    .filter(m => new Date(`${m.date}T${m.time}:00`).getTime() > nowMs)
+    .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
   const next = upcoming[0];
   if (!next) return null;
 
   const target = new Date(`${next.date}T${next.time}:00`).getTime();
-  const diff = target - Date.now();
+  const diff = target - nowMs;
   if (diff < 0) return null;
 
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));

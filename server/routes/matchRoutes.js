@@ -9,7 +9,7 @@ router.get('/', async (req, res) => {
     `SELECT id, DATE_FORMAT(match_date, '%Y-%m-%d') AS date,
             TIME_FORMAT(match_time, '%H:%i') AS time,
             opponent, opponent_dept AS opponentDept, venue,
-            match_type AS type, status, home_away AS homeAway,
+            match_type AS type, sport, status, home_away AS homeAway,
             score_ours AS scoreOurs, score_theirs AS scoreTheirs
      FROM matches ORDER BY match_date`
   );
@@ -20,10 +20,10 @@ router.post('/', auth, adminOnly, async (req, res) => {
   const m = req.body || {};
   const [r] = await pool.query(
     `INSERT INTO matches
-     (match_date, match_time, opponent, opponent_dept, venue, match_type, status, home_away, score_ours, score_theirs)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+     (match_date, match_time, opponent, opponent_dept, venue, match_type, sport, status, home_away, score_ours, score_theirs)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [m.date, m.time, m.opponent, m.opponentDept || null, m.venue || null,
-     m.type || 'League', m.status || 'upcoming', m.homeAway || 'home',
+     m.type || 'League', m.sport || 'football', m.status || 'upcoming', m.homeAway || 'home',
      m.scoreOurs ?? null, m.scoreTheirs ?? null]
   );
   res.json({ id: r.insertId });
@@ -34,10 +34,10 @@ router.put('/:id', auth, adminOnly, async (req, res) => {
   await pool.query(
     `UPDATE matches SET
        match_date = ?, match_time = ?, opponent = ?, opponent_dept = ?, venue = ?,
-       match_type = ?, status = ?, home_away = ?, score_ours = ?, score_theirs = ?
+       match_type = ?, sport = ?, status = ?, home_away = ?, score_ours = ?, score_theirs = ?
      WHERE id = ?`,
     [m.date, m.time, m.opponent, m.opponentDept || null, m.venue || null,
-     m.type, m.status, m.homeAway, m.scoreOurs ?? null, m.scoreTheirs ?? null, req.params.id]
+     m.type, m.sport || 'football', m.status, m.homeAway, m.scoreOurs ?? null, m.scoreTheirs ?? null, req.params.id]
   );
   res.json({ ok: true });
 });

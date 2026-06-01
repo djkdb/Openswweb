@@ -2,6 +2,36 @@
     min-height: 80vh;
 }
 
+.sport-filter-row {
+    margin-bottom: 24px;
+}
+
+.sport-filter-btn {
+    display: inline-block;
+    background-color: var(--card);
+    border: 1px solid var(--dark-gray);
+    color: lightgray;
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 8px;
+    margin-bottom: 6px;
+}
+
+.sport-filter-btn:hover {
+    border-color: var(--color);
+    color: white;
+}
+
+.sport-filter-btn.active {
+    background-color: var(--color);
+    color: var(--bg);
+    border-color: var(--color);
+}
+
 .schedule-stats-row {
     display: flex;
     margin-bottom: 36px;

@@ -4,28 +4,37 @@ import { pool } from '../db.js';
 const ADMIN_DEFAULT_PW = 'admin1234';
 
 const members = [
-  { number: 77, name: '차형창', nameEn: 'Hyeong-chang Cha', position: 'FW', role: 'Captain',      year: 22, goals: 14, assists: 6,  matches: 18, bio: '팀의 주장이자 에이스 스트라이커. 빠른 발과 정확한 결정력으로 팀 공격을 이끈다.' },
-  { number: 17, name: '이성준', nameEn: 'Seong-jun Lee',    position: 'MF', role: 'Vice-Captain', year: 21, goals: 5,  assists: 11, matches: 17, bio: '경기 흐름을 조율하는 미드필더. 패스 정확도와 시야가 강점.' },
-  { number: 29, name: '김태효', nameEn: 'Tae-hyo Kim',      position: 'DF', role: 'Manager',      year: 22, goals: 1,  assists: 2,  matches: 16, bio: '수비의 핵심. 안정적인 빌드업으로 후방을 책임진다.' },
-  { number: 1,  name: '박지훈', nameEn: 'Ji-hoon Park',     position: 'GK', role: 'Member',       year: 23, goals: 0,  assists: 0,  matches: 18, bio: '뛰어난 반사신경의 골키퍼. 클린시트 7회.' },
-  { number: 8,  name: '정민혁', nameEn: 'Min-hyuk Jung',    position: 'MF', role: 'Member',       year: 23, goals: 3,  assists: 7,  matches: 15, bio: '활동량이 많은 박스 투 박스 미드필더.' },
-  { number: 11, name: '한승우', nameEn: 'Seung-woo Han',    position: 'FW', role: 'Member',       year: 24, goals: 9,  assists: 4,  matches: 16, bio: '드리블에 능한 윙어. 측면을 무너뜨리는 유형.' },
-  { number: 5,  name: '오재현', nameEn: 'Jae-hyeon Oh',     position: 'DF', role: 'Member',       year: 22, goals: 0,  assists: 1,  matches: 17, bio: '제공권에 강한 센터백.' },
-  { number: 23, name: '서동훈', nameEn: 'Dong-hoon Seo',    position: 'MF', role: 'Member',       year: 24, goals: 2,  assists: 5,  matches: 14, bio: '세트피스 키커. 정확한 왼발 크로스.' },
-  { number: 4,  name: '윤성호', nameEn: 'Seong-ho Yoon',    position: 'DF', role: 'Member',       year: 21, goals: 0,  assists: 0,  matches: 18, bio: '풀백. 공격 가담과 수비 복귀가 빠르다.' },
-  { number: 9,  name: '강재민', nameEn: 'Jae-min Kang',     position: 'FW', role: 'Member',       year: 23, goals: 8,  assists: 3,  matches: 15, bio: '포스트 플레이에 강한 스트라이커.' },
-  { number: 14, name: '신현우', nameEn: 'Hyun-woo Shin',    position: 'MF', role: 'Member',       year: 24, goals: 4,  assists: 2,  matches: 13, bio: '먼 거리 슛이 강점인 공격형 미드필더.' },
-  { number: 21, name: '문지원', nameEn: 'Ji-won Moon',      position: 'GK', role: 'Member',       year: 24, goals: 0,  assists: 0,  matches: 4,  bio: '백업 골키퍼. 페널티킥 선방 전문.' }
+  { number: 77, name: '차형창', nameEn: 'Hyeong-chang Cha', position: 'FW', role: 'Captain',      year: 22, goals: 14, assists: 6,  cleanSheets: 0, matches: 18, bio: '팀의 주장이자 에이스 스트라이커. 빠른 발과 정확한 결정력으로 팀 공격을 이끈다.' },
+  { number: 17, name: '이성준', nameEn: 'Seong-jun Lee',    position: 'MF', role: 'Vice-Captain', year: 21, goals: 5,  assists: 11, cleanSheets: 0, matches: 17, bio: '경기 흐름을 조율하는 미드필더. 패스 정확도와 시야가 강점.' },
+  { number: 29, name: '김태효', nameEn: 'Tae-hyo Kim',      position: 'DF', role: 'Manager',      year: 22, goals: 1,  assists: 2,  cleanSheets: 0, matches: 16, bio: '수비의 핵심. 안정적인 빌드업으로 후방을 책임진다.' },
+  { number: 1,  name: '박지훈', nameEn: 'Ji-hoon Park',     position: 'GK', role: 'Member',       year: 23, goals: 0,  assists: 0,  cleanSheets: 7, matches: 18, bio: '뛰어난 반사신경의 골키퍼.' },
+  { number: 8,  name: '정민혁', nameEn: 'Min-hyuk Jung',    position: 'MF', role: 'Member',       year: 23, goals: 3,  assists: 7,  cleanSheets: 0, matches: 15, bio: '활동량이 많은 박스 투 박스 미드필더.' },
+  { number: 11, name: '한승우', nameEn: 'Seung-woo Han',    position: 'FW', role: 'Member',       year: 24, goals: 9,  assists: 4,  cleanSheets: 0, matches: 16, bio: '드리블에 능한 윙어. 측면을 무너뜨리는 유형.' },
+  { number: 5,  name: '오재현', nameEn: 'Jae-hyeon Oh',     position: 'DF', role: 'Member',       year: 22, goals: 0,  assists: 1,  cleanSheets: 0, matches: 17, bio: '제공권에 강한 센터백.' },
+  { number: 23, name: '서동훈', nameEn: 'Dong-hoon Seo',    position: 'MF', role: 'Member',       year: 24, goals: 2,  assists: 5,  cleanSheets: 0, matches: 14, bio: '세트피스 키커. 정확한 왼발 크로스.' },
+  { number: 4,  name: '윤성호', nameEn: 'Seong-ho Yoon',    position: 'DF', role: 'Member',       year: 21, goals: 0,  assists: 0,  cleanSheets: 0, matches: 18, bio: '풀백. 공격 가담과 수비 복귀가 빠르다.' },
+  { number: 9,  name: '강재민', nameEn: 'Jae-min Kang',     position: 'FW', role: 'Member',       year: 23, goals: 8,  assists: 3,  cleanSheets: 0, matches: 15, bio: '포스트 플레이에 강한 스트라이커.' },
+  { number: 14, name: '신현우', nameEn: 'Hyun-woo Shin',    position: 'MF', role: 'Member',       year: 24, goals: 4,  assists: 2,  cleanSheets: 0, matches: 13, bio: '먼 거리 슛이 강점인 공격형 미드필더.' },
+  { number: 21, name: '문지원', nameEn: 'Ji-won Moon',      position: 'GK', role: 'Member',       year: 24, goals: 0,  assists: 0,  cleanSheets: 2, matches: 4,  bio: '백업 골키퍼. 페널티킥 선방 전문.' }
 ];
 
+function dateFromToday(days) {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
 const matches = [
-  { date: '2026-05-24', time: '15:00', opponent: 'EE United',  dept: '전자공학과',   venue: '학생회관 운동장', type: 'League',   status: 'upcoming', ha: 'home', so: null, st: null },
-  { date: '2026-05-31', time: '14:00', opponent: 'ME FC',      dept: '기계공학과',   venue: '제2운동장',       type: 'League',   status: 'upcoming', ha: 'away', so: null, st: null },
-  { date: '2026-06-07', time: '16:00', opponent: 'CE Eagles',  dept: '컴퓨터공학과', venue: '학생회관 운동장', type: 'Cup',      status: 'upcoming', ha: 'home', so: null, st: null },
-  { date: '2026-05-17', time: '15:00', opponent: 'CHEM Lions', dept: '화학공학과',   venue: '학생회관 운동장', type: 'League',   status: 'finished', ha: 'home', so: 3, st: 1 },
-  { date: '2026-05-10', time: '14:00', opponent: 'BIO Wolves', dept: '생명공학과',   venue: '제2운동장',       type: 'League',   status: 'finished', ha: 'away', so: 2, st: 2 },
-  { date: '2026-05-03', time: '15:00', opponent: 'PHY United', dept: '물리학과',     venue: '학생회관 운동장', type: 'Friendly', status: 'finished', ha: 'home', so: 4, st: 0 },
-  { date: '2026-04-26', time: '15:00', opponent: 'MATH FC',    dept: '수학과',       venue: '제2운동장',       type: 'League',   status: 'finished', ha: 'away', so: 1, st: 2 }
+  { date: dateFromToday(3),   time: '15:00', opponent: 'EE United',  dept: '전자공학과',   venue: '학생회관 운동장', type: 'League',   sport: 'football', status: 'upcoming', ha: 'home', so: null, st: null },
+  { date: dateFromToday(7),   time: '20:00', opponent: 'EE Futsal',  dept: '전자공학과',   venue: '실내 체육관',     type: 'League',   sport: 'futsal',   status: 'upcoming', ha: 'home', so: null, st: null },
+  { date: dateFromToday(10),  time: '14:00', opponent: 'ME FC',      dept: '기계공학과',   venue: '제2운동장',       type: 'League',   sport: 'football', status: 'upcoming', ha: 'away', so: null, st: null },
+  { date: dateFromToday(14),  time: '20:00', opponent: 'CE Futsal',  dept: '컴퓨터공학과', venue: '실내 체육관',     type: 'Friendly', sport: 'futsal',   status: 'upcoming', ha: 'home', so: null, st: null },
+  { date: dateFromToday(17),  time: '16:00', opponent: 'CE Eagles',  dept: '컴퓨터공학과', venue: '학생회관 운동장', type: 'Cup',      sport: 'football', status: 'upcoming', ha: 'home', so: null, st: null },
+  { date: dateFromToday(-7),  time: '15:00', opponent: 'CHEM Lions', dept: '화학공학과',   venue: '학생회관 운동장', type: 'League',   sport: 'football', status: 'finished', ha: 'home', so: 3, st: 1 },
+  { date: dateFromToday(-14), time: '14:00', opponent: 'BIO Wolves', dept: '생명공학과',   venue: '제2운동장',       type: 'League',   sport: 'football', status: 'finished', ha: 'away', so: 2, st: 2 },
+  { date: dateFromToday(-21), time: '15:00', opponent: 'PHY United', dept: '물리학과',     venue: '학생회관 운동장', type: 'Friendly', sport: 'football', status: 'finished', ha: 'home', so: 4, st: 0 },
+  { date: dateFromToday(-28), time: '15:00', opponent: 'MATH FC',    dept: '수학과',       venue: '제2운동장',       type: 'League',   sport: 'football', status: 'finished', ha: 'away', so: 1, st: 2 },
+  { date: dateFromToday(-10), time: '20:00', opponent: 'BIO Futsal', dept: '생명공학과',   venue: '실내 체육관',     type: 'League',   sport: 'futsal',   status: 'finished', ha: 'home', so: 5, st: 3 }
 ];
 
 const notices = [
@@ -96,9 +105,9 @@ async function run() {
   await pool.query('DELETE FROM members');
   for (const m of members) {
     await pool.query(
-      `INSERT INTO members (number, name, name_en, position, role, year, goals, assists, matches_played, bio)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [m.number, m.name, m.nameEn, m.position, m.role, m.year, m.goals, m.assists, m.matches, m.bio]
+      `INSERT INTO members (number, name, name_en, position, role, year, goals, assists, clean_sheets, matches_played, bio)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [m.number, m.name, m.nameEn, m.position, m.role, m.year, m.goals, m.assists, m.cleanSheets, m.matches, m.bio]
     );
   }
   console.log(`✓ ${members.length} members`);
@@ -106,9 +115,9 @@ async function run() {
   await pool.query('DELETE FROM matches');
   for (const m of matches) {
     await pool.query(
-      `INSERT INTO matches (match_date, match_time, opponent, opponent_dept, venue, match_type, status, home_away, score_ours, score_theirs)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [m.date, m.time, m.opponent, m.dept, m.venue, m.type, m.status, m.ha, m.so, m.st]
+      `INSERT INTO matches (match_date, match_time, opponent, opponent_dept, venue, match_type, sport, status, home_away, score_ours, score_theirs)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [m.date, m.time, m.opponent, m.dept, m.venue, m.type, m.sport, m.status, m.ha, m.so, m.st]
     );
   }
   console.log(`✓ ${matches.length} matches`);
