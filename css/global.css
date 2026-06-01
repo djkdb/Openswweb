@@ -34,6 +34,7 @@ html, body {
     color: white;
     font-family: 'NEXON Football Gothic', sans-serif;
     min-height: 100vh;
+    overflow-x: hidden;
 }
 
 #root {
