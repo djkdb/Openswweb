@@ -47,11 +47,8 @@ function Members() {
             <button className="member-modal-close" onClick={() => setSelected(null)}>×</button>
 
             <div className="member-modal-head">
-              <div
-                className="member-modal-avatar"
-                style={{ background: positionColor[selected.position] + '33' }}
-              >
-                {selected.name.charAt(0)}
+              <div className="member-modal-jersey">
+                <JerseyIcon number={selected.number} color={positionColor[selected.position]} size={120} />
               </div>
               <div className="member-modal-num">#{selected.number}</div>
             </div>

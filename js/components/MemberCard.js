@@ -18,9 +18,7 @@ function MemberCard({ member, onClick }) {
       )}
 
       <div className="member-avatar">
-        <div className="member-avatar-circle">
-          {member.name.charAt(0)}
-        </div>
+        <JerseyIcon number={member.number} color={positionColor[member.position]} size={96} />
       </div>
 
       <div className="member-card-body">
