@@ -55,6 +55,7 @@ CREATE TABLE matches (
   home_away ENUM('home', 'away') DEFAULT 'home',
   score_ours INT,
   score_theirs INT,
+  appearance_counted BOOLEAN DEFAULT FALSE,
   INDEX idx_status_date (status, match_date),
   INDEX idx_sport (sport)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

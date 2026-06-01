@@ -547,6 +547,10 @@ function Admin({ onChange }) {
 
           {section === 'match' && (
             <div>
+              <div className="admin-hint-box">
+                💡 경기 상태를 <strong>finished</strong> 로 바꾸면, 해당 경기에 게시된 라인업의 부원들에게 <strong>출장 +1</strong> 이 자동 반영됩니다.
+                (다시 upcoming 으로 되돌리면 -1)
+              </div>
               <h3 className="admin-block-title">새 경기 추가</h3>
               <form onSubmit={handleAddMatch} className="admin-form">
                 <div className="row g-2">

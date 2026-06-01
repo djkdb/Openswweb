@@ -4,6 +4,30 @@ import { auth, adminOnly } from '../auth.js';
 
 const router = express.Router();
 
+async function lineupMemberIds(conn, matchId) {
+  const [[lineup]] = await conn.query('SELECT id FROM lineups WHERE match_id = ?', [matchId]);
+  if (!lineup) return [];
+  const [slots] = await conn.query(
+    'SELECT DISTINCT member_id FROM lineup_slots WHERE lineup_id = ?', [lineup.id]
+  );
+  return slots.map(s => s.member_id);
+}
+
+async function bumpAppearances(conn, matchId, delta) {
+  const ids = await lineupMemberIds(conn, matchId);
+  if (ids.length === 0) return false;
+  if (delta > 0) {
+    await conn.query(
+      'UPDATE members SET matches_played = matches_played + 1 WHERE id IN (?)', [ids]
+    );
+  } else {
+    await conn.query(
+      'UPDATE members SET matches_played = GREATEST(matches_played - 1, 0) WHERE id IN (?)', [ids]
+    );
+  }
+  return true;
+}
+
 router.get('/', async (req, res) => {
   const [rows] = await pool.query(
     `SELECT id, DATE_FORMAT(match_date, '%Y-%m-%d') AS date,
@@ -31,20 +55,71 @@ router.post('/', auth, adminOnly, async (req, res) => {
 
 router.put('/:id', auth, adminOnly, async (req, res) => {
   const m = req.body || {};
-  await pool.query(
-    `UPDATE matches SET
-       match_date = ?, match_time = ?, opponent = ?, opponent_dept = ?, venue = ?,
-       match_type = ?, sport = ?, status = ?, home_away = ?, score_ours = ?, score_theirs = ?
-     WHERE id = ?`,
-    [m.date, m.time, m.opponent, m.opponentDept || null, m.venue || null,
-     m.type, m.sport || 'football', m.status, m.homeAway, m.scoreOurs ?? null, m.scoreTheirs ?? null, req.params.id]
-  );
-  res.json({ ok: true });
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+
+    const [[before]] = await conn.query(
+      'SELECT status, appearance_counted FROM matches WHERE id = ?', [req.params.id]
+    );
+    if (!before) {
+      await conn.rollback();
+      return res.status(404).json({ error: 'not found' });
+    }
+
+    await conn.query(
+      `UPDATE matches SET
+         match_date = ?, match_time = ?, opponent = ?, opponent_dept = ?, venue = ?,
+         match_type = ?, sport = ?, status = ?, home_away = ?, score_ours = ?, score_theirs = ?
+       WHERE id = ?`,
+      [m.date, m.time, m.opponent, m.opponentDept || null, m.venue || null,
+       m.type, m.sport || 'football', m.status, m.homeAway, m.scoreOurs ?? null, m.scoreTheirs ?? null, req.params.id]
+    );
+
+    const wasFinished = before.status === 'finished';
+    const nowFinished = m.status === 'finished';
+
+    if (!wasFinished && nowFinished && !before.appearance_counted) {
+      const counted = await bumpAppearances(conn, req.params.id, +1);
+      if (counted) {
+        await conn.query('UPDATE matches SET appearance_counted = TRUE WHERE id = ?', [req.params.id]);
+      }
+    } else if (wasFinished && !nowFinished && before.appearance_counted) {
+      const counted = await bumpAppearances(conn, req.params.id, -1);
+      if (counted) {
+        await conn.query('UPDATE matches SET appearance_counted = FALSE WHERE id = ?', [req.params.id]);
+      }
+    }
+
+    await conn.commit();
+    res.json({ ok: true });
+  } catch (e) {
+    await conn.rollback();
+    res.status(500).json({ error: e.message });
+  } finally {
+    conn.release();
+  }
 });
 
 router.delete('/:id', auth, adminOnly, async (req, res) => {
-  await pool.query('DELETE FROM matches WHERE id = ?', [req.params.id]);
-  res.json({ ok: true });
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+    const [[match]] = await conn.query(
+      'SELECT status, appearance_counted FROM matches WHERE id = ?', [req.params.id]
+    );
+    if (match && match.status === 'finished' && match.appearance_counted) {
+      await bumpAppearances(conn, req.params.id, -1);
+    }
+    await conn.query('DELETE FROM matches WHERE id = ?', [req.params.id]);
+    await conn.commit();
+    res.json({ ok: true });
+  } catch (e) {
+    await conn.rollback();
+    res.status(500).json({ error: e.message });
+  } finally {
+    conn.release();
+  }
 });
 
 router.get('/:id/rsvp', async (req, res) => {
@@ -82,10 +157,6 @@ router.get('/:id/motm', async (req, res) => {
      FROM motm_votes WHERE match_id = ?
      GROUP BY voted_member_id ORDER BY votes DESC`,
     [req.params.id]
-  );
-  const [myVote] = await pool.query(
-    'SELECT voted_member_id FROM motm_votes WHERE match_id = ? AND voter_account_id = ?',
-    [req.params.id, req.headers['x-user-id'] || 0]
   );
   res.json({ tally: rows, totalVotes: rows.reduce((s, r) => s + Number(r.votes), 0) });
 });
@@ -139,7 +210,29 @@ router.post('/:id/lineup', auth, adminOnly, async (req, res) => {
   try {
     await conn.beginTransaction();
 
+    const [[match]] = await conn.query(
+      'SELECT status, appearance_counted FROM matches WHERE id = ?', [req.params.id]
+    );
+    if (!match) {
+      await conn.rollback();
+      return res.status(404).json({ error: 'match not found' });
+    }
+
     const [[existing]] = await conn.query('SELECT id FROM lineups WHERE match_id = ?', [req.params.id]);
+
+    if (match.status === 'finished' && match.appearance_counted && existing) {
+      const [oldSlots] = await conn.query(
+        'SELECT DISTINCT member_id FROM lineup_slots WHERE lineup_id = ?', [existing.id]
+      );
+      if (oldSlots.length) {
+        await conn.query(
+          'UPDATE members SET matches_played = GREATEST(matches_played - 1, 0) WHERE id IN (?)',
+          [oldSlots.map(s => s.member_id)]
+        );
+      }
+      await conn.query('UPDATE matches SET appearance_counted = FALSE WHERE id = ?', [req.params.id]);
+    }
+
     if (existing) {
       await conn.query('DELETE FROM lineup_slots WHERE lineup_id = ?', [existing.id]);
       await conn.query('DELETE FROM lineups WHERE id = ?', [existing.id]);
@@ -149,11 +242,21 @@ router.post('/:id/lineup', auth, adminOnly, async (req, res) => {
       'INSERT INTO lineups (match_id, lineup_type, formation, published_by) VALUES (?, ?, ?, ?)',
       [req.params.id, type || 'football', formation, req.user.id]
     );
-
     const rows = Object.entries(assignments).map(([sid, mid]) => [r.insertId, sid, mid]);
     if (rows.length) {
       await conn.query('INSERT INTO lineup_slots (lineup_id, slot_id, member_id) VALUES ?', [rows]);
     }
+
+    if (match.status === 'finished') {
+      const uniqueIds = [...new Set(Object.values(assignments).map(Number))];
+      if (uniqueIds.length) {
+        await conn.query(
+          'UPDATE members SET matches_played = matches_played + 1 WHERE id IN (?)', [uniqueIds]
+        );
+      }
+      await conn.query('UPDATE matches SET appearance_counted = TRUE WHERE id = ?', [req.params.id]);
+    }
+
     await conn.commit();
     res.json({ ok: true });
   } catch (e) {
@@ -165,8 +268,25 @@ router.post('/:id/lineup', auth, adminOnly, async (req, res) => {
 });
 
 router.delete('/:id/lineup', auth, adminOnly, async (req, res) => {
-  await pool.query('DELETE FROM lineups WHERE match_id = ?', [req.params.id]);
-  res.json({ ok: true });
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+    const [[match]] = await conn.query(
+      'SELECT status, appearance_counted FROM matches WHERE id = ?', [req.params.id]
+    );
+    if (match && match.status === 'finished' && match.appearance_counted) {
+      await bumpAppearances(conn, req.params.id, -1);
+      await conn.query('UPDATE matches SET appearance_counted = FALSE WHERE id = ?', [req.params.id]);
+    }
+    await conn.query('DELETE FROM lineups WHERE match_id = ?', [req.params.id]);
+    await conn.commit();
+    res.json({ ok: true });
+  } catch (e) {
+    await conn.rollback();
+    res.status(500).json({ error: e.message });
+  } finally {
+    conn.release();
+  }
 });
 
 export default router;
