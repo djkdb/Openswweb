@@ -8,6 +8,9 @@ function SquadMaker({ user }) {
   const [targetMatch, setTargetMatch] = React.useState('');
   const [publishMsg, setPublishMsg] = React.useState('');
   const [memberFilter, setMemberFilter] = React.useState('');
+  const [dragSource, setDragSource] = React.useState(null);
+  const [dragOverSlot, setDragOverSlot] = React.useState(null);
+  const [listIsDropTarget, setListIsDropTarget] = React.useState(false);
 
   const slots = formations[type][formation] || [];
 
@@ -71,6 +74,97 @@ function SquadMaker({ user }) {
     setSelectedSlot(nextEmpty ? nextEmpty.id : null);
   };
 
+  const handleMemberDragStart = (memberId, e) => {
+    const data = { type: 'member', memberId };
+    setDragSource(data);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', JSON.stringify(data));
+  };
+
+  const handleSlotDragStart = (slotId, e) => {
+    if (!assignments[slotId]) {
+      e.preventDefault();
+      return;
+    }
+    const data = { type: 'slot', slotId };
+    setDragSource(data);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', JSON.stringify(data));
+  };
+
+  const handleDragEnd = () => {
+    setDragSource(null);
+    setDragOverSlot(null);
+    setListIsDropTarget(false);
+  };
+
+  const handleSlotDragOver = (slotId, e) => {
+    e.preventDefault();
+    if (dragOverSlot !== slotId) setDragOverSlot(slotId);
+  };
+
+  const handleSlotDragLeave = () => {
+    setDragOverSlot(null);
+  };
+
+  const readDragData = (e) => {
+    try { return JSON.parse(e.dataTransfer.getData('text/plain')); }
+    catch { return dragSource; }
+  };
+
+  const handleSlotDrop = (targetSlotId, e) => {
+    e.preventDefault();
+    const src = readDragData(e);
+    setDragOverSlot(null);
+    setDragSource(null);
+    if (!src) return;
+
+    if (src.type === 'member') {
+      assignSlot(targetSlotId, src.memberId);
+      return;
+    }
+
+    if (src.type === 'slot') {
+      const fromSlot = src.slotId;
+      if (fromSlot === targetSlotId) return;
+      const updated = { ...assignments };
+      const fromMember = updated[fromSlot];
+      const toMember = updated[targetSlotId];
+      if (toMember) {
+        updated[fromSlot] = toMember;
+      } else {
+        delete updated[fromSlot];
+      }
+      updated[targetSlotId] = fromMember;
+      setAssignments(updated);
+      const nextEmpty = slots.find(s => !updated[s.id]);
+      setSelectedSlot(nextEmpty ? nextEmpty.id : null);
+    }
+  };
+
+  const handleListDragOver = (e) => {
+    if (dragSource && dragSource.type === 'slot') {
+      e.preventDefault();
+      setListIsDropTarget(true);
+    }
+  };
+
+  const handleListDragLeave = () => {
+    setListIsDropTarget(false);
+  };
+
+  const handleListDrop = (e) => {
+    e.preventDefault();
+    const src = readDragData(e);
+    setListIsDropTarget(false);
+    setDragSource(null);
+    if (!src || src.type !== 'slot') return;
+    const updated = { ...assignments };
+    delete updated[src.slotId];
+    setAssignments(updated);
+    setSelectedSlot(src.slotId);
+  };
+
   const handleReset = () => {
     if (Object.keys(assignments).length === 0) return;
     if (!confirm('정말 스쿼드를 초기화하시겠어요?')) return;
@@ -125,6 +219,11 @@ function SquadMaker({ user }) {
             <h2 className="section-title">{type === 'futsal' ? '풋살' : '축구'} 스쿼드 메이커</h2>
             <div className="squad-sub">
               부원을 선택해 포메이션에 배치하고, 다음 경기 라인업으로 게시할 수 있습니다.
+              <br />
+              <span className="squad-hint-inline">
+                Tip · 부원을 슬롯으로 끌어 놓거나, 슬롯끼리 끌어서 위치 교환,
+                슬롯에서 명단으로 끌어서 제외할 수 있습니다.
+              </span>
             </div>
           </div>
 
@@ -185,15 +284,22 @@ function SquadMaker({ user }) {
                 onChange={(e) => setMemberFilter(e.target.value)}
               />
 
-              <div className="squad-members-list">
+              <div
+                className={listIsDropTarget ? 'squad-members-list drop-target' : 'squad-members-list'}
+                onDragOver={handleListDragOver}
+                onDragLeave={handleListDragLeave}
+                onDrop={handleListDrop}
+              >
                 {filteredMembers.map(m => {
                   const used = usedIds.has(String(m.id));
                   return (
-                    <button
+                    <div
                       key={m.id}
                       className={used ? 'squad-mem-row used' : 'squad-mem-row'}
-                      onClick={() => handleMemberClick(m.id)}
-                      disabled={used}
+                      onClick={() => !used && handleMemberClick(m.id)}
+                      draggable={!used}
+                      onDragStart={(e) => handleMemberDragStart(m.id, e)}
+                      onDragEnd={handleDragEnd}
                     >
                       <span className="squad-mem-num">{m.number}</span>
                       <span className="squad-mem-name">{m.name}</span>
@@ -207,7 +313,7 @@ function SquadMaker({ user }) {
                         {m.position}
                       </span>
                       {used && <span className="squad-used-tag">배치됨</span>}
-                    </button>
+                    </div>
                   );
                 })}
                 {filteredMembers.length === 0 && (
@@ -261,12 +367,24 @@ function SquadMaker({ user }) {
                 const m = memberId ? findMember(memberId) : null;
                 const isSelected = selectedSlot === slot.id;
                 const color = m ? positionColor[m.position] : null;
+                const isDragOver = dragOverSlot === slot.id;
+                const isBeingDragged = dragSource && dragSource.type === 'slot' && dragSource.slotId === slot.id;
+                const cls = [
+                  'pitch-slot',
+                  m ? 'filled' : 'empty',
+                  isSelected ? 'selected' : '',
+                  isDragOver ? 'drag-over' : '',
+                  isBeingDragged ? 'dragging' : ''
+                ].join(' ').trim();
                 return (
                   <div
                     key={slot.id}
-                    className={`pitch-slot ${m ? 'filled' : 'empty'} ${isSelected ? 'selected' : ''}`}
+                    className={cls}
                     style={{ left: `${slot.x}%`, top: `${slot.y}%` }}
                     onClick={() => handleSlotClick(slot.id)}
+                    onDragOver={(e) => handleSlotDragOver(slot.id, e)}
+                    onDragLeave={handleSlotDragLeave}
+                    onDrop={(e) => handleSlotDrop(slot.id, e)}
                   >
                     <div
                       className="pitch-slot-label"
@@ -276,9 +394,10 @@ function SquadMaker({ user }) {
                     </div>
                     <div
                       className="pitch-shirt"
-                      style={color ? {
-                        background: `linear-gradient(180deg, ${color} 0%, ${color}cc 100%)`
-                      } : null}
+                      draggable={!!m}
+                      onDragStart={(e) => handleSlotDragStart(slot.id, e)}
+                      onDragEnd={handleDragEnd}
+                      style={color ? { backgroundColor: color } : null}
                     >
                       {m ? (
                         <span className="pitch-shirt-num">{m.number}</span>

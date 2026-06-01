@@ -19,7 +19,15 @@
     color: var(--gray);
     font-size: 0.9rem;
     margin-top: 8px;
-    max-width: 540px;
+    max-width: 600px;
+}
+
+.squad-hint-inline {
+    display: inline-block;
+    color: var(--light);
+    font-size: 0.78rem;
+    margin-top: 6px;
+    letter-spacing: 0.3px;
 }
 
 .squad-type-tabs {
@@ -116,6 +124,13 @@
     max-height: 320px;
     overflow-y: auto;
     padding-right: 4px;
+    border: 1px dashed transparent;
+    border-radius: 4px;
+}
+
+.squad-members-list.drop-target {
+    border-color: var(--danger);
+    background-color: rgba(255, 77, 94, 0.05);
 }
 
 .squad-mem-row {
@@ -125,13 +140,17 @@
     color: lightgray;
     padding: 9px 12px;
     border-radius: 4px;
-    cursor: pointer;
+    cursor: grab;
     font-size: 0.88rem;
     text-align: left;
     margin-bottom: 4px;
     display: flex;
     align-items: center;
     gap: 10px;
+}
+
+.squad-mem-row:active {
+    cursor: grabbing;
 }
 
 .squad-mem-row:hover {
@@ -319,32 +338,55 @@
     width: 56px;
     height: 56px;
     margin: 0 auto;
-    border: 2px solid black;
-    border-radius: 8px;
     background-color: white;
+    border: 2px solid black;
     text-align: center;
     line-height: 56px;
+    clip-path: polygon(
+        0 18%, 24% 18%, 30% 0, 70% 0, 76% 18%,
+        100% 18%, 100% 36%, 80% 36%, 80% 100%, 20% 100%, 20% 36%, 0 36%
+    );
 }
 
 .pitch-slot.empty .pitch-shirt {
-    background-color: var(--card);
+    background-color: rgba(255, 255, 255, 0.1);
     border-color: var(--dark-gray);
 }
 
 .pitch-slot.filled .pitch-shirt {
     border-color: black;
+    cursor: grab;
+}
+
+.pitch-slot.filled .pitch-shirt:active {
+    cursor: grabbing;
+}
+
+.pitch-slot.drag-over .pitch-shirt {
+    border-color: var(--light);
+    background-color: rgba(101, 244, 162, 0.4) !important;
+}
+
+.pitch-slot.dragging .pitch-shirt {
+    opacity: 0.35;
 }
 
 .pitch-shirt-num {
     font-family: 'NEXON Football Gothic', sans-serif;
     font-weight: 800;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     color: var(--bg);
+    line-height: 1;
+    padding-top: 18px;
+    display: inline-block;
 }
 
 .pitch-shirt-empty {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     color: var(--gray);
+    line-height: 1;
+    padding-top: 16px;
+    display: inline-block;
 }
 
 .pitch-slot-name {
@@ -475,20 +517,26 @@
     margin: 0 auto;
     background-color: white;
     border: 1px solid black;
-    border-radius: 6px;
     text-align: center;
     line-height: 34px;
+    clip-path: polygon(
+        0 18%, 24% 18%, 30% 0, 70% 0, 76% 18%,
+        100% 18%, 100% 36%, 80% 36%, 80% 100%, 20% 100%, 20% 36%, 0 36%
+    );
 }
 
 .lineup-slot.empty .lineup-shirt {
-    background-color: var(--card);
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .lineup-num {
     font-family: 'NEXON Football Gothic', sans-serif;
     font-weight: 800;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--bg);
+    line-height: 1;
+    padding-top: 10px;
+    display: inline-block;
 }
 
 .lineup-slot.empty .lineup-num {
