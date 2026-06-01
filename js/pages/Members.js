@@ -48,7 +48,7 @@ function Members() {
 
             <div className="member-modal-head">
               <div className="member-modal-jersey">
-                <JerseyIcon number={selected.number} color={positionColor[selected.position]} size={120} />
+                <JerseyIcon number={selected.number} color="#ffffff" size={150} />
               </div>
               <div className="member-modal-num">#{selected.number}</div>
             </div>

@@ -4,7 +4,6 @@ function MemberCard({ member, onClick }) {
   return (
     <div className="member-card card-fc" onClick={() => onClick(member)}>
       <div className="member-card-top">
-        <div className="member-number">#{member.number}</div>
         <div
           className="member-pos-badge"
           style={{ background: positionColor[member.position] + '22', color: positionColor[member.position] }}
@@ -18,7 +17,7 @@ function MemberCard({ member, onClick }) {
       )}
 
       <div className="member-avatar">
-        <JerseyIcon number={member.number} color={positionColor[member.position]} size={96} />
+        <JerseyIcon number={member.number} color="#ffffff" size={140} />
       </div>
 
       <div className="member-card-body">

@@ -22,7 +22,7 @@ function JerseyIcon({ number, color, size }) {
         stroke={stroke} strokeWidth="2"
       />
       <text
-        x="50" y="68"
+        x="50" y="60"
         textAnchor="middle"
         fontFamily="'NEXON Football Gothic', sans-serif"
         fontWeight="800"

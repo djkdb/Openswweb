@@ -55,16 +55,10 @@
 
 .member-card-top {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
-    margin-bottom: 16px;
-}
-
-.member-number {
-    font-family: 'NEXON Football Gothic', sans-serif;
-    font-weight: 800;
-    font-size: 2.4rem;
-    color: white;
+    margin-bottom: 8px;
+    min-height: 28px;
 }
 
 .member-pos-badge {
@@ -90,11 +84,17 @@
 
 .member-avatar {
     text-align: center;
-    margin: 4px 0 12px;
+    margin: 8px 0 18px;
 }
 
 .jersey-icon {
     display: inline-block;
+}
+
+.member-modal-jersey {
+    width: 150px;
+    height: 150px;
+    text-align: center;
 }
 
 .member-card-body {
@@ -197,12 +197,6 @@
     align-items: center;
     gap: 20px;
     margin-bottom: 16px;
-}
-
-.member-modal-jersey {
-    width: 120px;
-    height: 120px;
-    text-align: center;
 }
 
 .member-modal-num {
